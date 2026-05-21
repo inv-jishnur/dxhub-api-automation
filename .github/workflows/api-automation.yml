@@ -16,16 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
+    # Auto-login: Login API runs in beforeAll (no ACCESS_TOKEN). Mirror local .env via secrets.
     env:
       CI: true
       BASE_URL: ${{ secrets.BASE_URL }}
       AUTH_API_BASE_URL: ${{ secrets.AUTH_API_BASE_URL }}
-      PROVIDER_ID: ${{ secrets.PROVIDER_ID }}
-      SERVICE_ID: ${{ secrets.SERVICE_ID }}
+      LOGIN_URL: ${{ secrets.LOGIN_URL }}
       VALID_EMAIL: ${{ secrets.VALID_EMAIL }}
       VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
-      INVALID_EMAIL: ${{ secrets.INVALID_EMAIL }}
-      INVALID_PASSWORD: ${{ secrets.INVALID_PASSWORD }}
+      SERVICE_ID: ${{ secrets.SERVICE_ID }}
+      PROVIDER_ID: ${{ secrets.PROVIDER_ID }}
 
     steps:
       - name: Checkout repository

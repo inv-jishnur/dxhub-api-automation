@@ -17,8 +17,13 @@ function pickToken(body: Record<string, unknown>): string | undefined {
   return undefined;
 }
 
-/** Login API → access token for subsequent calls. */
+/** Login API → access token for subsequent calls. Uses ACCESS_TOKEN when set (e.g. CI). */
 export async function loginAccessToken(request: APIRequestContext): Promise<string> {
+  const presetToken = process.env.ACCESS_TOKEN?.trim();
+  if (presetToken) {
+    return presetToken;
+  }
+
   return allure.step('Login API — obtain access token', async () => {
     const payload = { email: credentials.validEmail, password: credentials.validPassword };
     await attachApiRequest('POST', loginUrl, payload);

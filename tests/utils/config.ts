@@ -3,15 +3,19 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
-export const baseURL = (process.env.BASE_URL ?? '').replace(/\/$/, '');
+export const baseURL = (process.env.BASE_URL?.trim() || '').replace(/\/$/, '');
 
 /** Host for login and provider plan list. Override with AUTH_API_BASE_URL in .env. */
 export const authApiBaseURL = (
-  process.env.AUTH_API_BASE_URL ?? 'https://dxhub-dev-api.innovaturelabs.net/api/v1'
+  process.env.AUTH_API_BASE_URL?.trim() ||
+  'https://dxhub-dev-api.innovaturelabs.net/api/v1'
 ).replace(/\/$/, '');
 
 export const loginEndpoint = process.env.LOGIN_ENDPOINT ?? '/login';
-export const loginUrl = `${authApiBaseURL}${loginEndpoint.startsWith('/') ? '' : '/'}${loginEndpoint}`;
+export const loginUrl = (
+  process.env.LOGIN_URL?.trim() ||
+  `${authApiBaseURL}${loginEndpoint.startsWith('/') ? '' : '/'}${loginEndpoint}`
+).replace(/\/$/, '');
 
 export const planProvidersPath = process.env.PLAN_PROVIDERS_PATH ?? '/plan/providers';
 export const planProvidersUrl = `${authApiBaseURL}${planProvidersPath.startsWith('/') ? '' : '/'}${planProvidersPath}`;
