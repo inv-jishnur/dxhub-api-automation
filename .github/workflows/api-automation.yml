@@ -1,0 +1,57 @@
+name: API Automation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-automation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  create-discount-api-tests:
+    name: Create Discount API Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    env:
+      CI: true
+      BASE_URL: ${{ secrets.BASE_URL }}
+      AUTH_API_BASE_URL: ${{ secrets.AUTH_API_BASE_URL }}
+      PROVIDER_ID: ${{ secrets.PROVIDER_ID }}
+      SERVICE_ID: ${{ secrets.SERVICE_ID }}
+      VALID_EMAIL: ${{ secrets.VALID_EMAIL }}
+      VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
+      INVALID_EMAIL: ${{ secrets.INVALID_EMAIL }}
+      INVALID_PASSWORD: ${{ secrets.INVALID_PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Playwright API tests
+        run: npx playwright test create-discount.api.spec.ts
+
+      - name: Generate Allure report
+        if: always()
+        run: npx allure generate allure-results --clean -o allure-report
+
+      - name: Upload Allure report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-create-discount
+          path: allure-report/
+          retention-days: 30
+          if-no-files-found: warn

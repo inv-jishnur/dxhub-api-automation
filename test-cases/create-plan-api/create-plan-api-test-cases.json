@@ -1,0 +1,968 @@
+{
+  "meta": {
+    "sourceCollection": "Automation - DXHub.postman_collection.json",
+    "generatedAt": "2026-04-10T10:00:20.612Z",
+    "outputDirectory": "test-cases/<api-slug>/",
+    "notes": [
+      "Create/Edit field rules: provider int; plan_name max 250; plan_code max 100; type in {1,2}; plan_type in {1,2,3}; billing_type in {1,2}; description max 255.",
+      "Login and Provider plan list use dxhub-dev-api host from collection; Plan CRUD uses dev-console-api.jpmob.jp from collection.",
+      "Detailed View URL was missing in the Postman item; GET /api/v1/plan/provider/{id} assumed—confirm with backend if different."
+    ],
+    "api": "Create Plan API",
+    "slug": "create-plan-api",
+    "testCaseCount": 41
+  },
+  "testCases": [
+    {
+      "slNo": 1,
+      "testCaseId": "API_TC_017",
+      "testCaseDescription": "Verify that the Create Plan API returns success when all required fields are valid according to the schema.",
+      "feature": "Create Plan API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Provider ID 9 (or a valid provider from environment) exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 with Content-Type application/json. The response should include the created plan identifier and persisted field values matching the request.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 2,
+      "testCaseId": "API_TC_018",
+      "testCaseDescription": "Verify that an error is returned when provider is missing from the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 with an error indicating provider is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 3,
+      "testCaseId": "API_TC_019",
+      "testCaseDescription": "Verify that an error is returned when provider is null in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":null,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating provider is invalid or required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": null,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 4,
+      "testCaseId": "API_TC_020",
+      "testCaseDescription": "Verify that an error is returned when provider has an invalid data type (string) in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":\"9\",\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating provider must be an integer.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": "9",
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 5,
+      "testCaseId": "API_TC_021",
+      "testCaseDescription": "Verify that an error is returned when provider references a non-existent provider ID in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":999999999,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Provider ID 999999999 does not exist.",
+      "expectedResult": "The API should return HTTP 400 or 404 with an error indicating the provider is not found or invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 999999999,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 6,
+      "testCaseId": "API_TC_022",
+      "testCaseDescription": "Verify that an error is returned when plan_name is missing from the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_name is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 7,
+      "testCaseId": "API_TC_023",
+      "testCaseDescription": "Verify that an error is returned when plan_name is null in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":null,\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_name is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": null,
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 8,
+      "testCaseId": "API_TC_024",
+      "testCaseDescription": "Verify that an error is returned when plan_name exceeds 250 characters in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Boundary Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_name exceeds maximum length of 250 characters.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 9,
+      "testCaseId": "API_TC_025",
+      "testCaseDescription": "Verify that the Create Plan API accepts plan_name with length exactly equal to 250 characters.",
+      "feature": "Create Plan API",
+      "subFeature": "Boundary Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 and persist plan_name of 250 characters.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 10,
+      "testCaseId": "API_TC_026",
+      "testCaseDescription": "Verify that an error is returned when plan_code is missing from the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_code is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 11,
+      "testCaseId": "API_TC_027",
+      "testCaseDescription": "Verify that an error is returned when plan_code is null in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":null,\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_code is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": null,
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 12,
+      "testCaseId": "API_TC_028",
+      "testCaseDescription": "Verify that an error is returned when plan_code exceeds 100 characters in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Boundary Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_code exceeds maximum length of 100 characters.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 13,
+      "testCaseId": "API_TC_029",
+      "testCaseDescription": "Verify that the Create Plan API accepts plan_code with length exactly equal to 100 characters.",
+      "feature": "Create Plan API",
+      "subFeature": "Boundary Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 and persist plan_code of 100 characters.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 14,
+      "testCaseId": "API_TC_030",
+      "testCaseDescription": "Verify that an error is returned when type is missing from the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating type is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 15,
+      "testCaseId": "API_TC_031",
+      "testCaseDescription": "Verify that an error is returned when type is null in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":null,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating type is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": null,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 16,
+      "testCaseId": "API_TC_032",
+      "testCaseDescription": "Verify that an error is returned when type has an unsupported integer value (not 1 or 2) in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":99,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating type must be 1 (Origin) or 2 (Recharge).",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 99,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 17,
+      "testCaseId": "API_TC_033",
+      "testCaseDescription": "Verify that an error is returned when type has invalid data type (string) in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":\"1\",\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating type must be an integer.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": "1",
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 18,
+      "testCaseId": "API_TC_034",
+      "testCaseDescription": "Verify that the Create Plan API accepts type value 1 (Origin).",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 and persist type as Origin (1).",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 19,
+      "testCaseId": "API_TC_035",
+      "testCaseDescription": "Verify that the Create Plan API accepts type value 2 (Recharge).",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":2,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 and persist type as Recharge (2).",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 2,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 20,
+      "testCaseId": "API_TC_036",
+      "testCaseDescription": "Verify that an error is returned when plan_type is missing from the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_type is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 21,
+      "testCaseId": "API_TC_037",
+      "testCaseDescription": "Verify that an error is returned when plan_type is null in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":null,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_type is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": null,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 22,
+      "testCaseId": "API_TC_038",
+      "testCaseDescription": "Verify that an error is returned when plan_type has an unsupported value (not 1, 2, or 3) in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":10,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_type must be 1 (Data), 2 (Voice), or 3 (Combo).",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 10,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 23,
+      "testCaseId": "API_TC_039",
+      "testCaseDescription": "Verify that the Create Plan API accepts plan_type value 1 (Data).",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 and persist plan_type as Data.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 24,
+      "testCaseId": "API_TC_040",
+      "testCaseDescription": "Verify that the Create Plan API accepts plan_type value 2 (Voice).",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":2,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 and persist plan_type as Voice.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 2,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 25,
+      "testCaseId": "API_TC_041",
+      "testCaseDescription": "Verify that the Create Plan API accepts plan_type value 3 (Combo).",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":3,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 and persist plan_type as Combo.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 3,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 26,
+      "testCaseId": "API_TC_042",
+      "testCaseDescription": "Verify that an error is returned when billing_type is missing from the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating billing_type is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 27,
+      "testCaseId": "API_TC_043",
+      "testCaseDescription": "Verify that an error is returned when billing_type is null in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":null,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating billing_type is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": null,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 28,
+      "testCaseId": "API_TC_044",
+      "testCaseDescription": "Verify that an error is returned when billing_type has an unsupported value (not 1 or 2) in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":5,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating billing_type must be 1 (Prepaid) or 2 (Postpaid).",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 5,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 29,
+      "testCaseId": "API_TC_045",
+      "testCaseDescription": "Verify that the Create Plan API accepts billing_type value 1 (Prepaid).",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 and persist billing_type as Prepaid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 30,
+      "testCaseId": "API_TC_046",
+      "testCaseDescription": "Verify that the Create Plan API accepts billing_type value 2 (Postpaid).",
+      "feature": "Create Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":2,\"description\":\"Valid description\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 and persist billing_type as Postpaid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 2,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 31,
+      "testCaseId": "API_TC_047",
+      "testCaseDescription": "Verify that an error is returned when description is missing from the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating description is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1
+        }
+      }
+    },
+    {
+      "slNo": 32,
+      "testCaseId": "API_TC_048",
+      "testCaseDescription": "Verify that an error is returned when description is null in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":null}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating description is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": null
+        }
+      }
+    },
+    {
+      "slNo": 33,
+      "testCaseId": "API_TC_049",
+      "testCaseDescription": "Verify that an error is returned when description exceeds 255 characters in the Create Plan request body.",
+      "feature": "Create Plan API",
+      "subFeature": "Boundary Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating description exceeds maximum length of 255 characters.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      }
+    },
+    {
+      "slNo": 34,
+      "testCaseId": "API_TC_050",
+      "testCaseDescription": "Verify that the Create Plan API accepts description with length exactly equal to 255 characters.",
+      "feature": "Create Plan API",
+      "subFeature": "Boundary Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 or 200 and persist description of 255 characters.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      }
+    },
+    {
+      "slNo": 35,
+      "testCaseId": "API_TC_051",
+      "testCaseDescription": "Verify that an error is returned when the Create Plan request contains unexpected extra fields not defined in the contract.",
+      "feature": "Create Plan API",
+      "subFeature": "Request Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\",\"unexpected_field_xyz\":true}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 with an error about unexpected fields, or HTTP 200/201 if extra fields are ignored; result must match product specification (document actual behavior).",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description",
+          "unexpected_field_xyz": true
+        }
+      }
+    },
+    {
+      "slNo": 36,
+      "testCaseId": "API_TC_052",
+      "testCaseDescription": "Verify that an error is returned when the Create Plan request body is malformed JSON.",
+      "feature": "Create Plan API",
+      "subFeature": "Malformed JSON",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Set raw body to a malformed JSON string (e.g. missing closing brace).\n6. Send the API request.\n7. Verify HTTP status code and error body.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating malformed JSON.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST"
+      }
+    },
+    {
+      "slNo": 37,
+      "testCaseId": "API_TC_053",
+      "testCaseDescription": "Verify that an error is returned when the Create Plan API is called without Authorization header.",
+      "feature": "Create Plan API",
+      "subFeature": "Authentication",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set Content-Type: application/json. Omit Authorization header.\n5. Enter valid JSON body: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}.\n6. Send the API request.\n7. Verify response.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 401 Unauthorized.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 38,
+      "testCaseId": "API_TC_054",
+      "testCaseDescription": "Verify that an error is returned when the Create Plan API is called with an invalid access token.",
+      "feature": "Create Plan API",
+      "subFeature": "Invalid Token",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set Authorization: DXHUB invalid_token_string. Content-Type: application/json.\n5. Enter valid JSON body: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}.\n6. Send the API request.\n7. Verify response.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 401 Unauthorized.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 39,
+      "testCaseId": "API_TC_055",
+      "testCaseDescription": "Verify that an error is returned when Content-Type is not application/json for the Create Plan API.",
+      "feature": "Create Plan API",
+      "subFeature": "Header Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set Authorization with valid token. Set Content-Type to text/plain (not application/json).\n5. Send body as JSON string: {\"provider\":9,\"plan_name\":\"ValidPlanName\",\"plan_code\":\"VALID_CODE\",\"type\":1,\"plan_type\":1,\"billing_type\":1,\"description\":\"Valid description\"}.\n6. Send the API request.\n7. Verify response.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 415 Unsupported Media Type or 400 as per implementation.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 40,
+      "testCaseId": "API_TC_056",
+      "testCaseDescription": "Verify that the Create Plan API rejects GET method on the create endpoint URL.",
+      "feature": "Create Plan API",
+      "subFeature": "HTTP Method Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: GET.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Send the API request without body.\n6. Verify response.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 405 Method Not Allowed or 404.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "GET"
+      }
+    },
+    {
+      "slNo": 41,
+      "testCaseId": "API_TC_057",
+      "testCaseDescription": "Verify that the Create Plan API returns a controlled error when the database or persistence layer is unavailable.",
+      "feature": "Create Plan API",
+      "subFeature": "Dependency Failure",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: valid JSON body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Database dependency failure is simulated in test environment.",
+      "expectedResult": "The API should return HTTP 503 or 500 with a safe error message that does not leak internal details.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider",
+        "method": "POST"
+      }
+    }
+  ]
+}

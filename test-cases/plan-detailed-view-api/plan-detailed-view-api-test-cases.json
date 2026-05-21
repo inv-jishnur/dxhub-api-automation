@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "sourceCollection": "Automation - DXHub.postman_collection.json",
+    "generatedAt": "2026-04-10T10:00:20.612Z",
+    "outputDirectory": "test-cases/<api-slug>/",
+    "notes": [
+      "Create/Edit field rules: provider int; plan_name max 250; plan_code max 100; type in {1,2}; plan_type in {1,2,3}; billing_type in {1,2}; description max 255.",
+      "Login and Provider plan list use dxhub-dev-api host from collection; Plan CRUD uses dev-console-api.jpmob.jp from collection.",
+      "Detailed View URL was missing in the Postman item; GET /api/v1/plan/provider/{id} assumed—confirm with backend if different."
+    ],
+    "api": "Plan Detailed View API",
+    "slug": "plan-detailed-view-api",
+    "testCaseCount": 4
+  },
+  "testCases": [
+    {
+      "slNo": 1,
+      "testCaseId": "API_TC_074",
+      "testCaseDescription": "Verify that the Plan Detailed View API returns plan details for a valid plan_id (GET by id).",
+      "feature": "Plan Detailed View API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: GET.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. plan_id exists. Note: Postman export named 'Detailed view' had no URL; endpoint assumed as GET /api/v1/plan/provider/{plan_id} consistent with Edit/Delete.",
+      "expectedResult": "The API should return HTTP 200 with Content-Type application/json. The body should include plan fields (provider, plan_name, plan_code, type, plan_type, billing_type, description) with correct types.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "GET"
+      }
+    },
+    {
+      "slNo": 2,
+      "testCaseId": "API_TC_075",
+      "testCaseDescription": "Verify that an error is returned when requesting details for a non-existent plan_id.",
+      "feature": "Plan Detailed View API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/999999999.\n3. Select HTTP method: GET.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 404 with an error indicating the plan was not found.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/999999999",
+        "method": "GET"
+      }
+    },
+    {
+      "slNo": 3,
+      "testCaseId": "API_TC_076",
+      "testCaseDescription": "Verify that an error is returned when the Plan Detailed View API is called without Authorization header.",
+      "feature": "Plan Detailed View API",
+      "subFeature": "Authentication",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: GET.\n4. Set request headers: no Authorization.\n5. Omit or manipulate Authorization header as per test case.\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "plan_id exists.",
+      "expectedResult": "The API should return HTTP 401 Unauthorized.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "GET"
+      }
+    },
+    {
+      "slNo": 4,
+      "testCaseId": "API_TC_077",
+      "testCaseDescription": "Verify that the Plan Detailed View API response schema matches the expected structure and data types.",
+      "feature": "Plan Detailed View API",
+      "subFeature": "Response Schema Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: GET.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. plan_id exists.",
+      "expectedResult": "The API should return HTTP 200. Response fields should match contract: string fields as strings, integer enums as numbers.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "GET"
+      }
+    }
+  ]
+}

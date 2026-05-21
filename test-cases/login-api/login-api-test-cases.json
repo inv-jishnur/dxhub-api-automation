@@ -1,0 +1,359 @@
+{
+  "meta": {
+    "source": "d:\\Test File\\Login.md",
+    "generatedAt": "2026-05-19T06:00:51.094Z",
+    "api": "Login API",
+    "slug": "login-api",
+    "endpoint": "/api/v1/login",
+    "method": "POST",
+    "testCaseCount": 21,
+    "notes": [
+      "Pattern 1 request headers: Content-Type application/json, Accept application/json.",
+      "Success 200: refresh, access, user_id, nick_name, email, role.",
+      "Error 401: errorCode 100, message Invalid credentials.",
+      "Error 429: errorCode 104, account lock — manual / environment setup (API_TC_021)."
+    ]
+  },
+  "testCases": [
+    {
+      "slNo": 1,
+      "testCaseId": "API_TC_001",
+      "testCaseDescription": "Verify that the Login API returns HTTP 200 with access token, refresh token, and user profile fields when valid email and password are provided.",
+      "feature": "Login API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"<valid_email>\",\"password\":\"<valid_password>\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "A registered user account exists in the system with known email and password. API service is available.",
+      "expectedResult": "The API should return HTTP 200 with Content-Type application/json. The response body should include string fields \"refresh\" and \"access\", numeric \"user_id\", string \"nick_name\", string \"email\" matching the authenticated user, and numeric \"role\".",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST",
+        "samplePayload": {
+          "email": "agent123@example.com",
+          "password": "Agent@123"
+        }
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 2,
+      "testCaseId": "API_TC_002",
+      "testCaseDescription": "Verify that an error response is returned when the email field is missing from the Login request body.",
+      "feature": "Login API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"password\":\"<value>\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 422 with an error indicating that email is required or the request is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 3,
+      "testCaseId": "API_TC_003",
+      "testCaseDescription": "Verify that an error response is returned when the email field is null in the Login request body.",
+      "feature": "Login API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":null,\"password\":\"<value>\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 422 with validation indicating email cannot be null or is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 4,
+      "testCaseId": "API_TC_004",
+      "testCaseDescription": "Verify that an error response is returned when the email field is an empty string in the Login request body.",
+      "feature": "Login API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"\",\"password\":\"<value>\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 422 with an error indicating email is required or invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 5,
+      "testCaseId": "API_TC_005",
+      "testCaseDescription": "Verify that an error response is returned when the email field has an invalid data type in the Login request body.",
+      "feature": "Login API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":12345,\"password\":\"<value>\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating email is invalid or the request body failed validation.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 6,
+      "testCaseId": "API_TC_006",
+      "testCaseDescription": "Verify that an error response is returned when the email field has an invalid email format in the Login request body.",
+      "feature": "Login API",
+      "subFeature": "Format Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"not-an-email\",\"password\":\"<value>\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 422 with an error indicating email format is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 7,
+      "testCaseId": "API_TC_007",
+      "testCaseDescription": "Verify that an error response is returned when the email does not exist in the system.",
+      "feature": "Login API",
+      "subFeature": "Invalid Credentials",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"<non_existent_email>\",\"password\":\"<any_password>\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available. Email is not registered in the system.",
+      "expectedResult": "The API should return HTTP 401 with errorCode \"100\" and message \"Invalid credentials\" per API specification. No access or refresh token should be returned.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 8,
+      "testCaseId": "API_TC_008",
+      "testCaseDescription": "Verify that an error response is returned when the password field is missing from the Login request body.",
+      "feature": "Login API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"<valid_email>\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating password is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 9,
+      "testCaseId": "API_TC_009",
+      "testCaseDescription": "Verify that an error response is returned when the password field is null in the Login request body.",
+      "feature": "Login API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"<valid_email>\",\"password\":null}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 422 with validation error for password.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 10,
+      "testCaseId": "API_TC_010",
+      "testCaseDescription": "Verify that an error response is returned when the password field is an empty string in the Login request body.",
+      "feature": "Login API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"<valid_email>\",\"password\":\"\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating password is required or invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 11,
+      "testCaseId": "API_TC_011",
+      "testCaseDescription": "Verify that an error response is returned when the password field has an invalid data type in the Login request body.",
+      "feature": "Login API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"<valid_email>\",\"password\":12345}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating password is invalid or failed validation.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 12,
+      "testCaseId": "API_TC_012",
+      "testCaseDescription": "Verify that HTTP 401 with errorCode 100 and message Invalid credentials is returned when the password does not match the registered password.",
+      "feature": "Login API",
+      "subFeature": "Invalid Credentials",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"<valid_email>\",\"password\":\"<wrong_password>\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available. Valid user exists; password is intentionally incorrect.",
+      "expectedResult": "The API should return HTTP 401. The response body should contain errorCode \"100\" and message \"Invalid credentials\". No access or refresh token should be issued.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 13,
+      "testCaseId": "API_TC_013",
+      "testCaseDescription": "Verify that an error response is returned when the Login request body is empty.",
+      "feature": "Login API",
+      "subFeature": "Request Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: (empty body)\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating the request body is missing or invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 14,
+      "testCaseId": "API_TC_014",
+      "testCaseDescription": "Verify that an error response is returned when the Login request body is malformed JSON.",
+      "feature": "Login API",
+      "subFeature": "Malformed JSON",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {invalid json\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 with an error indicating malformed JSON or invalid request body.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 15,
+      "testCaseId": "API_TC_015",
+      "testCaseDescription": "Verify that the Login API handles unexpected fields in the request body without breaking server behavior.",
+      "feature": "Login API",
+      "subFeature": "Unexpected Fields",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"<valid_email>\",\"password\":\"<valid_password>\",\"unexpected_field\":\"value\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should either return HTTP 200 (ignoring unknown fields) or HTTP 400 if unknown fields are rejected. Response must match documented success or error contract.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 16,
+      "testCaseId": "API_TC_016",
+      "testCaseDescription": "Verify that an error response is returned when the Login API is invoked with HTTP GET instead of POST.",
+      "feature": "Login API",
+      "subFeature": "HTTP Method Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: GET.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: none\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 405 Method Not Allowed or HTTP 404, and must not perform login.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "GET"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 17,
+      "testCaseId": "API_TC_017",
+      "testCaseDescription": "Verify that an error response is returned when the Login API is invoked with HTTP PUT instead of POST.",
+      "feature": "Login API",
+      "subFeature": "HTTP Method Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: PUT.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: {\"email\":\"<valid_email>\",\"password\":\"<valid_password>\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 405 Method Not Allowed or HTTP 404, and must not perform login.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "PUT"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 18,
+      "testCaseId": "API_TC_018",
+      "testCaseDescription": "Verify that an error response is returned when the Login API is invoked with HTTP DELETE instead of POST.",
+      "feature": "Login API",
+      "subFeature": "HTTP Method Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: DELETE.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: none\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 405 Method Not Allowed or HTTP 404, and must not perform login.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "DELETE"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 19,
+      "testCaseId": "API_TC_019",
+      "testCaseDescription": "Verify that an error response is returned when Content-Type is not application/json for the Login API.",
+      "feature": "Login API",
+      "subFeature": "Header Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: Valid JSON body with Content-Type: text/plain\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 415 Unsupported Media Type or HTTP 400 indicating unsupported content type.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 20,
+      "testCaseId": "API_TC_020",
+      "testCaseDescription": "Verify that an error response is returned when the Content-Type header is missing for the Login API.",
+      "feature": "Login API",
+      "subFeature": "Header Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: Valid JSON body without Content-Type header\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 400 or 415, or process the request per server configuration; login must not succeed with invalid content negotiation if JSON is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    },
+    {
+      "slNo": 21,
+      "testCaseId": "API_TC_021",
+      "testCaseDescription": "Verify that HTTP 429 with errorCode 104 is returned when the account is temporarily locked after repeated failed login attempts.",
+      "feature": "Login API",
+      "subFeature": "Account Lockout",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: {AUTH_API_BASE_URL}/login.\n3. Select HTTP method: POST.\n4. Set request headers: Content-Type: application/json; Accept: application/json (unless this test specifies otherwise).\n5. Do not send an Authorization header for Login requests.\n6. Enter request payload: Repeated failed login attempts until lockout threshold\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Test account configured or driven to lockout state. API service is available.",
+      "expectedResult": "The API should return HTTP 429. The response body should contain errorCode \"104\" and message \"Account is temporarily locked. Try again in 1 hour\".",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "/api/v1/login",
+        "method": "POST"
+      },
+      "automatable": true
+    }
+  ]
+}

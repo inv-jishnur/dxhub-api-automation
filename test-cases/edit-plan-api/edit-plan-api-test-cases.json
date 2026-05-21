@@ -1,0 +1,209 @@
+{
+  "meta": {
+    "sourceCollection": "Automation - DXHub.postman_collection.json",
+    "generatedAt": "2026-04-10T10:00:20.612Z",
+    "outputDirectory": "test-cases/<api-slug>/",
+    "notes": [
+      "Create/Edit field rules: provider int; plan_name max 250; plan_code max 100; type in {1,2}; plan_type in {1,2,3}; billing_type in {1,2}; description max 255.",
+      "Login and Provider plan list use dxhub-dev-api host from collection; Plan CRUD uses dev-console-api.jpmob.jp from collection.",
+      "Detailed View URL was missing in the Postman item; GET /api/v1/plan/provider/{id} assumed—confirm with backend if different."
+    ],
+    "api": "Edit Plan API",
+    "slug": "edit-plan-api",
+    "testCaseCount": 12
+  },
+  "testCases": [
+    {
+      "slNo": 1,
+      "testCaseId": "API_TC_058",
+      "testCaseDescription": "Verify that the Edit Plan API updates successfully when plan_name is sent with a valid value (partial update).",
+      "feature": "Edit Plan API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"plan_name\":\"UpdatedName\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. A plan record exists with a known plan_id.",
+      "expectedResult": "The API should return HTTP 200 with Content-Type application/json. The response should reflect the updated plan_name.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "PATCH",
+        "samplePayload": {
+          "plan_name": "UpdatedName"
+        }
+      }
+    },
+    {
+      "slNo": 2,
+      "testCaseId": "API_TC_059",
+      "testCaseDescription": "Verify that the Edit Plan API updates successfully when all schema fields are sent with valid values.",
+      "feature": "Edit Plan API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: full body matching create schema\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Existing plan_id.",
+      "expectedResult": "The API should return HTTP 200 and persist all updated fields according to the request.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "PATCH",
+        "samplePayload": {
+          "provider": 9,
+          "plan_name": "ValidPlanName",
+          "plan_code": "VALID_CODE",
+          "type": 1,
+          "plan_type": 1,
+          "billing_type": 1,
+          "description": "Valid description"
+        }
+      }
+    },
+    {
+      "slNo": 3,
+      "testCaseId": "API_TC_060",
+      "testCaseDescription": "Verify that an error is returned when plan_id in the Edit Plan URL path is non-existent.",
+      "feature": "Edit Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"plan_name\":\"X\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. plan_id does not exist in the system.",
+      "expectedResult": "The API should return HTTP 404 with an error indicating the plan was not found.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/999999999",
+        "method": "PATCH"
+      }
+    },
+    {
+      "slNo": 4,
+      "testCaseId": "API_TC_061",
+      "testCaseDescription": "Verify that an error is returned when plan_name exceeds 250 characters in the Edit Plan request body.",
+      "feature": "Edit Plan API",
+      "subFeature": "Boundary Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"plan_name\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Existing plan_id.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_name exceeds 250 characters.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "PATCH"
+      }
+    },
+    {
+      "slNo": 5,
+      "testCaseId": "API_TC_062",
+      "testCaseDescription": "Verify that an error is returned when plan_code exceeds 100 characters in the Edit Plan request body.",
+      "feature": "Edit Plan API",
+      "subFeature": "Boundary Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"plan_code\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Existing plan_id.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_code exceeds 100 characters.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "PATCH"
+      }
+    },
+    {
+      "slNo": 6,
+      "testCaseId": "API_TC_063",
+      "testCaseDescription": "Verify that an error is returned when type has an unsupported value in the Edit Plan request body.",
+      "feature": "Edit Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"type\":99}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Existing plan_id.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating type must be 1 or 2.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "PATCH"
+      }
+    },
+    {
+      "slNo": 7,
+      "testCaseId": "API_TC_064",
+      "testCaseDescription": "Verify that an error is returned when plan_type has an unsupported value in the Edit Plan request body.",
+      "feature": "Edit Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"plan_type\":99}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Existing plan_id.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating plan_type must be 1, 2, or 3.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "PATCH"
+      }
+    },
+    {
+      "slNo": 8,
+      "testCaseId": "API_TC_065",
+      "testCaseDescription": "Verify that an error is returned when billing_type has an unsupported value in the Edit Plan request body.",
+      "feature": "Edit Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"billing_type\":5}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Existing plan_id.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating billing_type must be 1 or 2.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "PATCH"
+      }
+    },
+    {
+      "slNo": 9,
+      "testCaseId": "API_TC_066",
+      "testCaseDescription": "Verify that an error is returned when description exceeds 255 characters in the Edit Plan request body.",
+      "feature": "Edit Plan API",
+      "subFeature": "Boundary Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"description\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Existing plan_id.",
+      "expectedResult": "The API should return HTTP 400 or 422 indicating description exceeds 255 characters.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "PATCH"
+      }
+    },
+    {
+      "slNo": 10,
+      "testCaseId": "API_TC_067",
+      "testCaseDescription": "Verify that an error is returned when the Edit Plan API is called without Authorization header.",
+      "feature": "Edit Plan API",
+      "subFeature": "Authentication",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: no Authorization.\n5. Omit or manipulate Authorization header as per test case.\n6. Enter request payload: {\"plan_name\":\"X\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Existing plan_id.",
+      "expectedResult": "The API should return HTTP 401 Unauthorized.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "PATCH"
+      }
+    },
+    {
+      "slNo": 11,
+      "testCaseId": "API_TC_068",
+      "testCaseDescription": "Verify that an error is returned when the Edit Plan API is invoked with POST instead of PATCH.",
+      "feature": "Edit Plan API",
+      "subFeature": "HTTP Method Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"plan_name\":\"X\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Existing plan_id.",
+      "expectedResult": "The API should return HTTP 405 Method Not Allowed or 404; update must not apply via incorrect method.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "POST"
+      }
+    },
+    {
+      "slNo": 12,
+      "testCaseId": "API_TC_069",
+      "testCaseDescription": "Verify that an error is returned when the Edit Plan request body is malformed JSON.",
+      "feature": "Edit Plan API",
+      "subFeature": "Malformed JSON",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: PATCH.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: invalid JSON\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Existing plan_id.",
+      "expectedResult": "The API should return HTTP 400 indicating malformed JSON.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "PATCH"
+      }
+    }
+  ]
+}

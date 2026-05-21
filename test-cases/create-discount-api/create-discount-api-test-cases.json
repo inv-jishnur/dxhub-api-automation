@@ -1,0 +1,1325 @@
+{
+  "meta": {
+    "sourceDocument": "DiscountCreate.md",
+    "generatedAt": "2026-05-19T11:20:24.657Z",
+    "outputDirectory": "test-cases/create-discount-api/",
+    "notes": [
+      "POST /api/v1/discount — Pattern 2 auth (DXHUB token).",
+      "discount_mode: 1 Fixed Amount, 2 Percentage; coupon_type: 1 Initial, 2 Monthly; status: 1 Enabled, 2 Disabled.",
+      "Success: HTTP 201 with message and code in response."
+    ],
+    "api": "Create Discount API",
+    "slug": "create-discount-api",
+    "testCaseCount": 51
+  },
+  "testCases": [
+    {
+      "slNo": 1,
+      "testCaseId": "API_TC_078",
+      "testCaseDescription": "Verify that the Create Discount API returns HTTP 201 when all required fields are valid according to the schema.",
+      "feature": "Create Discount API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 with Content-Type application/json. The response body should contain message \"Discount created successfully\" and code matching the request code field.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 2,
+      "testCaseId": "API_TC_079",
+      "testCaseDescription": "Verify that an error is returned when code is missing from the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 with an error indicating that code is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 3,
+      "testCaseId": "API_TC_080",
+      "testCaseDescription": "Verify that an error is returned when code is null in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":null,\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that code is invalid or required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": null,
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 4,
+      "testCaseId": "API_TC_081",
+      "testCaseDescription": "Verify that an error is returned when code is empty in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that code is required or invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 5,
+      "testCaseId": "API_TC_082",
+      "testCaseDescription": "Verify that an error is returned when code has an invalid data type (number) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":12345,\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that code must be a string.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": 12345,
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 6,
+      "testCaseId": "API_TC_083",
+      "testCaseDescription": "Verify that an error is returned when name is missing from the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 with an error indicating that name is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 7,
+      "testCaseId": "API_TC_084",
+      "testCaseDescription": "Verify that an error is returned when name is null in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":null,\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that name is invalid or required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": null,
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 8,
+      "testCaseId": "API_TC_085",
+      "testCaseDescription": "Verify that an error is returned when name is empty in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that name is required or invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 9,
+      "testCaseId": "API_TC_086",
+      "testCaseDescription": "Verify that an error is returned when name has an invalid data type (boolean) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":true,\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that name must be a string.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": true,
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 10,
+      "testCaseId": "API_TC_087",
+      "testCaseDescription": "Verify that an error is returned when service_id is missing from the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 with an error indicating that service_id is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 11,
+      "testCaseId": "API_TC_088",
+      "testCaseDescription": "Verify that an error is returned when service_id is null in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":null,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that service_id is invalid or required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": null,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 12,
+      "testCaseId": "API_TC_089",
+      "testCaseDescription": "Verify that an error is returned when service_id has an invalid data type (string) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":\"1\",\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that service_id must be an integer.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": "1",
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 13,
+      "testCaseId": "API_TC_090",
+      "testCaseDescription": "Verify that an error is returned when service_id references a non-existent service in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":999999999,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. Service ID 999999999 does not exist.",
+      "expectedResult": "The API should return HTTP 400 or 404 with an error indicating the service is not found or invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 999999999,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 14,
+      "testCaseId": "API_TC_091",
+      "testCaseDescription": "Verify that an error is returned when discount_mode is missing from the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 with an error indicating that discount_mode is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 15,
+      "testCaseId": "API_TC_092",
+      "testCaseDescription": "Verify that an error is returned when discount_mode is null in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":null,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that discount_mode is invalid or required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": null,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 16,
+      "testCaseId": "API_TC_093",
+      "testCaseDescription": "Verify that an error is returned when discount_mode has an unsupported integer value (not 1 or 2) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":99,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that discount_mode is invalid or unsupported.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 99,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 17,
+      "testCaseId": "API_TC_094",
+      "testCaseDescription": "Verify that an error is returned when discount_mode has an invalid data type (string) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":\"1\",\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that discount_mode must be an integer.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": "1",
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 18,
+      "testCaseId": "API_TC_095",
+      "testCaseDescription": "Verify that the Create Discount API accepts discount_mode value 1 (Fixed Amount).",
+      "feature": "Create Discount API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 with a success message and the created discount code in the response body.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 19,
+      "testCaseId": "API_TC_096",
+      "testCaseDescription": "Verify that the Create Discount API accepts discount_mode value 2 (Percentage).",
+      "feature": "Create Discount API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":2,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 with a success message and the created discount code in the response body.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 2,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 20,
+      "testCaseId": "API_TC_097",
+      "testCaseDescription": "Verify that an error is returned when coupon_type is missing from the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 with an error indicating that coupon_type is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 21,
+      "testCaseId": "API_TC_098",
+      "testCaseDescription": "Verify that an error is returned when coupon_type is null in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":null,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that coupon_type is invalid or required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": null,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 22,
+      "testCaseId": "API_TC_099",
+      "testCaseDescription": "Verify that an error is returned when coupon_type has an unsupported integer value (not 1 or 2) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":10,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that coupon_type is invalid or unsupported.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 10,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 23,
+      "testCaseId": "API_TC_100",
+      "testCaseDescription": "Verify that an error is returned when coupon_type has an invalid data type (string) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":\"1\",\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that coupon_type must be an integer.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": "1",
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 24,
+      "testCaseId": "API_TC_101",
+      "testCaseDescription": "Verify that the Create Discount API accepts coupon_type value 1 (Initial).",
+      "feature": "Create Discount API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 with a success message and the created discount code in the response body.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 25,
+      "testCaseId": "API_TC_102",
+      "testCaseDescription": "Verify that the Create Discount API accepts coupon_type value 2 (Monthly).",
+      "feature": "Create Discount API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":2,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 with a success message and the created discount code in the response body.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 2,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 26,
+      "testCaseId": "API_TC_103",
+      "testCaseDescription": "Verify that an error is returned when value is missing from the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 with an error indicating that value is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 27,
+      "testCaseId": "API_TC_104",
+      "testCaseDescription": "Verify that an error is returned when value is null in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":null,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that value is invalid or required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": null,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 28,
+      "testCaseId": "API_TC_105",
+      "testCaseDescription": "Verify that an error is returned when value has an invalid data type (string) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":\"10\",\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that value must be an integer.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": "10",
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 29,
+      "testCaseId": "API_TC_106",
+      "testCaseDescription": "Verify that an error is returned when value is negative in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":-1,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that value is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": -1,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 30,
+      "testCaseId": "API_TC_107",
+      "testCaseDescription": "Verify that an error is returned when value is zero in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Boundary Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":0,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that value must be greater than zero.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 0,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 31,
+      "testCaseId": "API_TC_108",
+      "testCaseDescription": "Verify that an error is returned when start_date is missing from the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 with an error indicating that start_date is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 32,
+      "testCaseId": "API_TC_109",
+      "testCaseDescription": "Verify that an error is returned when start_date is null in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":null,\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that start_date is invalid or required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": null,
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 33,
+      "testCaseId": "API_TC_110",
+      "testCaseDescription": "Verify that an error is returned when start_date has an invalid date format in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Format Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"01-04-2026\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that start_date format is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "01-04-2026",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 34,
+      "testCaseId": "API_TC_111",
+      "testCaseDescription": "Verify that an error is returned when start_date has an invalid data type (number) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":20260401,\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that start_date must be a valid date string.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": 20260401,
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 35,
+      "testCaseId": "API_TC_112",
+      "testCaseDescription": "Verify that an error is returned when end_date is missing from the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 with an error indicating that end_date is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 36,
+      "testCaseId": "API_TC_113",
+      "testCaseDescription": "Verify that an error is returned when end_date is null in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":null}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that end_date is invalid or required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": null
+        }
+      }
+    },
+    {
+      "slNo": 37,
+      "testCaseId": "API_TC_114",
+      "testCaseDescription": "Verify that an error is returned when end_date has an invalid date format in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Format Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026/04/01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that end_date format is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026/04/01"
+        }
+      }
+    },
+    {
+      "slNo": 38,
+      "testCaseId": "API_TC_115",
+      "testCaseDescription": "Verify that an error is returned when end_date is earlier than start_date in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-06-01\",\"end_date\":\"2026-05-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that end_date must be on or after start_date.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-06-01",
+          "end_date": "2026-05-01"
+        }
+      }
+    },
+    {
+      "slNo": 39,
+      "testCaseId": "API_TC_116",
+      "testCaseDescription": "Verify that an error is returned when status is missing from the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Missing Parameter",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 with an error indicating that status is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 40,
+      "testCaseId": "API_TC_117",
+      "testCaseDescription": "Verify that an error is returned when status is null in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Required Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":null,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that status is invalid or required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": null,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 41,
+      "testCaseId": "API_TC_118",
+      "testCaseDescription": "Verify that an error is returned when status has an unsupported integer value (not 1 or 2) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":5,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that status is invalid or unsupported.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 5,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 42,
+      "testCaseId": "API_TC_119",
+      "testCaseDescription": "Verify that an error is returned when status has an invalid data type (string) in the Create Discount request body.",
+      "feature": "Create Discount API",
+      "subFeature": "Data Type Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":\"1\",\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating that status must be an integer.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": "1",
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 43,
+      "testCaseId": "API_TC_120",
+      "testCaseDescription": "Verify that the Create Discount API accepts status value 1 (Enabled).",
+      "feature": "Create Discount API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 with a success message and the created discount code in the response body.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 44,
+      "testCaseId": "API_TC_121",
+      "testCaseDescription": "Verify that the Create Discount API accepts status value 2 (Disabled).",
+      "feature": "Create Discount API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":2,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 201 with a success message and the created discount code in the response body.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 2,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 45,
+      "testCaseId": "API_TC_122",
+      "testCaseDescription": "Verify that an error is returned when the Create Discount request contains a duplicate code that already exists.",
+      "feature": "Create Discount API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"DUPLICATE_CODE_TEST\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. A discount with code DUPLICATE_CODE_TEST was created in a prior step.",
+      "expectedResult": "The API should return HTTP 400 indicating that the discount code already exists.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "DUPLICATE_CODE_TEST",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 46,
+      "testCaseId": "API_TC_123",
+      "testCaseDescription": "Verify that an error is returned when the Create Discount request contains unexpected extra fields not defined in the contract.",
+      "feature": "Create Discount API",
+      "subFeature": "Request Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\",\"unexpected_field_xyz\":true}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 rejecting unknown fields, or HTTP 201 if extra fields are ignored per backend policy.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01",
+          "unexpected_field_xyz": true
+        }
+      }
+    },
+    {
+      "slNo": 47,
+      "testCaseId": "API_TC_124",
+      "testCaseDescription": "Verify that an error is returned when the Create Discount request body is malformed JSON.",
+      "feature": "Create Discount API",
+      "subFeature": "Request Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: \"{\"\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 indicating the request body is not valid JSON.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": "{"
+      }
+    },
+    {
+      "slNo": 48,
+      "testCaseId": "API_TC_125",
+      "testCaseDescription": "Verify that an error is returned when the Create Discount API is called without Authorization header.",
+      "feature": "Create Discount API",
+      "subFeature": "Authorization Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 401 indicating authentication is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 49,
+      "testCaseId": "API_TC_126",
+      "testCaseDescription": "Verify that an error is returned when the Create Discount API is called with an invalid access token.",
+      "feature": "Create Discount API",
+      "subFeature": "Authorization Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 401 indicating the token is invalid or unauthorized.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 50,
+      "testCaseId": "API_TC_127",
+      "testCaseDescription": "Verify that an error is returned when Content-Type is not application/json for the Create Discount API.",
+      "feature": "Create Discount API",
+      "subFeature": "Header Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 400 or 415 indicating an unsupported or invalid Content-Type.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    },
+    {
+      "slNo": 51,
+      "testCaseId": "API_TC_128",
+      "testCaseDescription": "Verify that the Create Discount API rejects GET method on the create endpoint URL.",
+      "feature": "Create Discount API",
+      "subFeature": "HTTP Method Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/discount.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: {\"code\":\"SIM50\",\"name\":\"Sim Welcome Discount\",\"service_id\":1,\"coupon_type\":1,\"discount_mode\":1,\"value\":10,\"status\":1,\"start_date\":\"2026-04-01\",\"end_date\":\"2026-04-01\"}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 404 or 405 indicating GET is not allowed on this endpoint.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/discount",
+        "method": "POST",
+        "samplePayload": {
+          "code": "SIM50",
+          "name": "Sim Welcome Discount",
+          "service_id": 1,
+          "coupon_type": 1,
+          "discount_mode": 1,
+          "value": 10,
+          "status": 1,
+          "start_date": "2026-04-01",
+          "end_date": "2026-04-01"
+        }
+      }
+    }
+  ]
+}

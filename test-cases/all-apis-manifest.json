@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "sourceCollection": "Automation - DXHub.postman_collection.json",
+    "generatedAt": "2026-04-10T10:00:20.612Z",
+    "outputDirectory": "test-cases/<api-slug>/",
+    "notes": [
+      "Create/Edit field rules: provider int; plan_name max 250; plan_code max 100; type in {1,2}; plan_type in {1,2,3}; billing_type in {1,2}; description max 255.",
+      "Login and Provider plan list use dxhub-dev-api host from collection; Plan CRUD uses dev-console-api.jpmob.jp from collection.",
+      "Detailed View URL was missing in the Postman item; GET /api/v1/plan/provider/{id} assumed—confirm with backend if different."
+    ],
+    "totalTestCases": 128
+  },
+  "apis": [
+    {
+      "feature": "Login API",
+      "slug": "login-api",
+      "testCaseCount": 10,
+      "json": "test-cases/login-api/login-api-test-cases.json",
+      "excel": "test-cases/login-api/login-api-test-cases.xlsx"
+    },
+    {
+      "feature": "Provider Plan List API",
+      "slug": "provider-plan-list-api",
+      "testCaseCount": 6,
+      "json": "test-cases/provider-plan-list-api/provider-plan-list-api-test-cases.json",
+      "excel": "test-cases/provider-plan-list-api/provider-plan-list-api-test-cases.xlsx"
+    },
+    {
+      "feature": "Create Plan API",
+      "slug": "create-plan-api",
+      "testCaseCount": 41,
+      "json": "test-cases/create-plan-api/create-plan-api-test-cases.json",
+      "excel": "test-cases/create-plan-api/create-plan-api-test-cases.xlsx"
+    },
+    {
+      "feature": "Edit Plan API",
+      "slug": "edit-plan-api",
+      "testCaseCount": 12,
+      "json": "test-cases/edit-plan-api/edit-plan-api-test-cases.json",
+      "excel": "test-cases/edit-plan-api/edit-plan-api-test-cases.xlsx"
+    },
+    {
+      "feature": "Delete Plan API",
+      "slug": "delete-plan-api",
+      "testCaseCount": 4,
+      "json": "test-cases/delete-plan-api/delete-plan-api-test-cases.json",
+      "excel": "test-cases/delete-plan-api/delete-plan-api-test-cases.xlsx"
+    },
+    {
+      "feature": "Plan Detailed View API",
+      "slug": "plan-detailed-view-api",
+      "testCaseCount": 4,
+      "json": "test-cases/plan-detailed-view-api/plan-detailed-view-api-test-cases.json",
+      "excel": "test-cases/plan-detailed-view-api/plan-detailed-view-api-test-cases.xlsx"
+    },
+    {
+      "feature": "Create Discount API",
+      "slug": "create-discount-api",
+      "testCaseCount": 51,
+      "json": "test-cases/create-discount-api/create-discount-api-test-cases.json",
+      "excel": "test-cases/create-discount-api/create-discount-api-test-cases.xlsx"
+    }
+  ]
+}

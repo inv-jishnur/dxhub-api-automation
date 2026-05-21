@@ -1,0 +1,107 @@
+{
+  "meta": {
+    "sourceCollection": "Automation - DXHub.postman_collection.json",
+    "generatedAt": "2026-04-10T10:00:20.612Z",
+    "outputDirectory": "test-cases/<api-slug>/",
+    "notes": [
+      "Create/Edit field rules: provider int; plan_name max 250; plan_code max 100; type in {1,2}; plan_type in {1,2,3}; billing_type in {1,2}; description max 255.",
+      "Login and Provider plan list use dxhub-dev-api host from collection; Plan CRUD uses dev-console-api.jpmob.jp from collection.",
+      "Detailed View URL was missing in the Postman item; GET /api/v1/plan/provider/{id} assumed—confirm with backend if different."
+    ],
+    "api": "Provider Plan List API",
+    "slug": "provider-plan-list-api",
+    "testCaseCount": 6
+  },
+  "testCases": [
+    {
+      "slNo": 1,
+      "testCaseId": "API_TC_011",
+      "testCaseDescription": "Verify that the Provider plan list API returns a successful response when called with a valid access token.",
+      "feature": "Provider Plan List API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers.\n3. Select HTTP method: GET.\n4. Set request headers: Authorization: DXHUB <token>; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. API service is available.",
+      "expectedResult": "The API should return HTTP 200 with Content-Type application/json. The response body should contain a list structure for provider plans (array or paginated object) with expected fields per API contract.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers",
+        "method": "GET"
+      }
+    },
+    {
+      "slNo": 2,
+      "testCaseId": "API_TC_012",
+      "testCaseDescription": "Verify that the Provider plan list API returns an error when the Authorization header is missing.",
+      "feature": "Provider Plan List API",
+      "subFeature": "Authentication",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers.\n3. Select HTTP method: GET.\n4. Set request headers: no Authorization header.\n5. Omit or manipulate Authorization header as per test case.\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 401 Unauthorized with an error indicating authentication is required.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers",
+        "method": "GET"
+      }
+    },
+    {
+      "slNo": 3,
+      "testCaseId": "API_TC_013",
+      "testCaseDescription": "Verify that the Provider plan list API returns an error when an invalid access token is supplied.",
+      "feature": "Provider Plan List API",
+      "subFeature": "Invalid Token",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers.\n3. Select HTTP method: GET.\n4. Set request headers: Authorization: DXHUB invalid_token.\n5. Omit or manipulate Authorization header as per test case.\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "API service is available.",
+      "expectedResult": "The API should return HTTP 401 Unauthorized with an error indicating the token is invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers",
+        "method": "GET"
+      }
+    },
+    {
+      "slNo": 4,
+      "testCaseId": "API_TC_014",
+      "testCaseDescription": "Verify that the Provider plan list API returns an error when an expired access token is supplied.",
+      "feature": "Provider Plan List API",
+      "subFeature": "Expired Token",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers.\n3. Select HTTP method: GET.\n4. Set request headers: Authorization: DXHUB <expired_token>.\n5. Omit or manipulate Authorization header as per test case.\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "An expired JWT or access token is available for testing.",
+      "expectedResult": "The API should return HTTP 401 Unauthorized with an error indicating the token is expired or invalid.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers",
+        "method": "GET"
+      }
+    },
+    {
+      "slNo": 5,
+      "testCaseId": "API_TC_015",
+      "testCaseDescription": "Verify that the Provider plan list API rejects a POST request to the same URL.",
+      "feature": "Provider Plan List API",
+      "subFeature": "HTTP Method Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers.\n3. Select HTTP method: POST.\n4. Set request headers: Authorization: DXHUB <valid_token>.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: empty JSON object {}\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 405 Method Not Allowed or 404, and must not return the list as for GET.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers",
+        "method": "POST"
+      }
+    },
+    {
+      "slNo": 6,
+      "testCaseId": "API_TC_016",
+      "testCaseDescription": "Verify that the Provider plan list API response schema contains the expected top-level fields and data types.",
+      "feature": "Provider Plan List API",
+      "subFeature": "Response Schema Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers.\n3. Select HTTP method: GET.\n4. Set request headers: Authorization: DXHUB <valid_token>.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. At least one plan exists or empty list is valid.",
+      "expectedResult": "The API should return HTTP 200. Each list item should expose fields consistent with provider plan entities (identifiers, names, codes as applicable) with correct JSON types.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dxhub-dev-api.innovaturelabs.net/api/v1/plan/providers",
+        "method": "GET"
+      }
+    }
+  ]
+}

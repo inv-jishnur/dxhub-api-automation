@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "sourceCollection": "Automation - DXHub.postman_collection.json",
+    "generatedAt": "2026-04-10T10:00:20.612Z",
+    "outputDirectory": "test-cases/<api-slug>/",
+    "notes": [
+      "Create/Edit field rules: provider int; plan_name max 250; plan_code max 100; type in {1,2}; plan_type in {1,2,3}; billing_type in {1,2}; description max 255.",
+      "Login and Provider plan list use dxhub-dev-api host from collection; Plan CRUD uses dev-console-api.jpmob.jp from collection.",
+      "Detailed View URL was missing in the Postman item; GET /api/v1/plan/provider/{id} assumed—confirm with backend if different."
+    ],
+    "api": "Delete Plan API",
+    "slug": "delete-plan-api",
+    "testCaseCount": 4
+  },
+  "testCases": [
+    {
+      "slNo": 1,
+      "testCaseId": "API_TC_070",
+      "testCaseDescription": "Verify that the Delete Plan API removes the plan when a valid plan_id and token are provided.",
+      "feature": "Delete Plan API",
+      "subFeature": "Success Response",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: DELETE.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists. A deletable plan_id exists in the test environment.",
+      "expectedResult": "The API should return HTTP 204 No Content or 200 with a success payload per API contract. Subsequent GET detail for the same id should return 404.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "DELETE"
+      }
+    },
+    {
+      "slNo": 2,
+      "testCaseId": "API_TC_071",
+      "testCaseDescription": "Verify that an error is returned when deleting a non-existent plan_id.",
+      "feature": "Delete Plan API",
+      "subFeature": "Logical Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/999999999.\n3. Select HTTP method: DELETE.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 404 with an error indicating the plan was not found.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/999999999",
+        "method": "DELETE"
+      }
+    },
+    {
+      "slNo": 3,
+      "testCaseId": "API_TC_072",
+      "testCaseDescription": "Verify that an error is returned when the Delete Plan API is called without Authorization header.",
+      "feature": "Delete Plan API",
+      "subFeature": "Authentication",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/{plan_id}.\n3. Select HTTP method: DELETE.\n4. Set request headers: no Authorization.\n5. Omit or manipulate Authorization header as per test case.\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Existing plan_id.",
+      "expectedResult": "The API should return HTTP 401 Unauthorized.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "DELETE"
+      }
+    },
+    {
+      "slNo": 4,
+      "testCaseId": "API_TC_073",
+      "testCaseDescription": "Verify that an error is returned when the Delete Plan API is invoked with GET instead of DELETE.",
+      "feature": "Delete Plan API",
+      "subFeature": "HTTP Method Validation",
+      "testSteps": "1. Open API testing tool or automation environment.\n2. Enter API endpoint: https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>.\n3. Select HTTP method: GET.\n4. Set request headers: Authorization: DXHUB <valid_token>; Content-Type: application/json; Accept: application/json.\n5. Provide authentication token as per test (DXHUB <access_token> in Authorization header when required).\n6. Enter request payload: no body\n7. Send the API request.\n8. Verify HTTP status code and response body against Expected Result.",
+      "preCondition": "Valid API access token exists.",
+      "expectedResult": "The API should return HTTP 405 Method Not Allowed or 200 for detail view if GET is defined for same path; must not delete the resource.",
+      "status": "Not Executed",
+      "automationHints": {
+        "endpoint": "https://dev-console-api.jpmob.jp/api/v1/plan/provider/<plan_id>",
+        "method": "GET"
+      }
+    }
+  ]
+}

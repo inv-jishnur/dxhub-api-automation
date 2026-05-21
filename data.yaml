@@ -1,0 +1,14 @@
+# Reference: map env vars used by automation (values come from .env at runtime).
+meta:
+  project: dxhub-api-automation
+env:
+  base_url: BASE_URL
+  auth_api_base_url: AUTH_API_BASE_URL
+  login_endpoint: LOGIN_ENDPOINT
+  plan_providers_path: PLAN_PROVIDERS_PATH
+  provider_id: PROVIDER_ID
+  auth_prefix: AUTH_PREFIX
+  valid_email: VALID_EMAIL
+  valid_password: VALID_PASSWORD
+  invalid_email: INVALID_EMAIL
+  invalid_password: INVALID_PASSWORD

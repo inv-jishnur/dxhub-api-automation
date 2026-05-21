@@ -1,0 +1,42 @@
+{
+  "name": "dxhub-api-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright API automation for DXHUB console API",
+  "scripts": {
+    "test": "playwright test --pass-with-no-tests",
+    "test:allure-example": "playwright test allure-reporting.example.api.spec.ts",
+    "test:login": "playwright test login.api.spec.ts",
+    "test:create-plan": "playwright test create-plan.api.spec.ts",
+    "test:create-discount": "playwright test create-discount.api.spec.ts",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report",
+    "allure:report": "npm run allure:generate && npm run allure:open",
+    "allure:clean": "node -e \"const fs=require('fs');['allure-results','allure-report'].forEach(d=>{try{fs.rmSync(d,{recursive:true,force:true})}catch{}})\"",
+    "generate:create-discount-tests": "node scripts/generate-create-discount-test-cases.js",
+    "generate:login-tests": "node scripts/generate-login-test-cases.js",
+    "test:headed": "playwright test --pass-with-no-tests",
+    "generate:excel": "node scripts/generate-excel.js",
+    "generate:dxhub-tests": "node scripts/generate-dxhub-test-cases.js",
+    "mcp:login": "tsx mcp-server/index.ts",
+    "mcp:login:smoke": "tsx mcp-server/smoke.ts",
+    "mcp:login:smoke:all": "tsx mcp-server/smoke.ts --all"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@playwright/test": "^1.49.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.10.0",
+    "allure-commandline": "^2.41.0",
+    "allure-playwright": "^3.9.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.0",
+    "undici": "^6.24.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "js-yaml": "^4.1.0",
+    "xlsx": "^0.18.5",
+    "zod": "^4.3.6"
+  }
+}

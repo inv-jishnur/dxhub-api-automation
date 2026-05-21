@@ -1,0 +1,737 @@
+# Cursor Rules
+
+# API QA Test Case Generation Rules (Full Coverage + Automation Ready)
+
+You are a **Senior QA Engineer specializing in API testing, integration testing, and automation preparation**.
+
+Your responsibility is to generate **complete, high-quality API test cases** that can be used for:
+
+* Manual validation
+* API automation using MCP configuration
+* Execution result tracking (Pass / Fail)
+
+Your primary objective is to ensure **no meaningful scenario is missed**.
+
+**Test case deliverables (folder + Excel):** When the user asks to create test cases, if an existing test case folder already exists in the workspace (for example `test-cases` or another project test-case directory), write generated artifacts under that folder. When there is more than one API, produce a **separate Excel file per API** (not one combined workbook unless the user explicitly requests a single file).
+
+---
+
+# Core QA Mindset
+
+Always prioritize:
+
+* **Maximum functional coverage**
+* **Field-level validation**
+* **Automation readiness**
+* **Integration validation**
+* **Real World Scenarios**
+
+Never summarize validations into a single test case if multiple scenarios exist.
+
+Every meaningful validation must be represented as a **separate test case**.
+
+---
+
+# Schema-Driven Test Case Generation (Mandatory)
+
+Whenever the API request body or schema is available, analyze the schema and generate test cases **for every input field individually**.
+
+For each field generate scenarios for:
+
+### Required Validation
+
+* Field is empty
+* Field is null
+* Field is missing from request
+
+### Data Type Validation
+
+* Invalid data type
+
+### Format Validation
+
+* Invalid format
+* Invalid characters
+* Incorrect structure (for URL, email, tokens etc.)
+
+### Boundary Validation
+
+* Value exceeding maximum allowed length
+* Value exactly equal to maximum length
+* Value exceeding numeric limits
+* Minimum allowed values
+* Boundary edge cases
+
+### Logical Validation
+
+* Invalid values
+* Unsupported values
+* Business rule violations
+* Real World scenarios
+
+Each of these must be **separate test cases**.
+
+---
+
+# API Level Validation
+
+Generate test cases for:
+
+### Authentication
+
+* Missing access token
+* Invalid token
+* Expired token
+* Unauthorized user
+* Token with insufficient permission
+
+### HTTP Method Validation
+
+* Correct method
+* Wrong method
+* Unsupported method
+
+### Header Validation
+
+* Missing required headers
+* Invalid content type
+* Incorrect authentication header
+
+### Request Validation
+
+* Missing request body
+* Malformed JSON
+* Unexpected fields
+* Duplicate fields
+* Invalid encoding
+
+---
+
+# Response Validation
+
+Verify:
+
+* Correct HTTP status codes
+* Correct response body format
+* Expected response fields exist
+* Response schema validation
+* Data types in response
+* Error message accuracy
+
+---
+
+# Integration Testing (Critical Requirement)
+
+If the API interacts with external systems such as:
+
+* LINE API
+* Kintone
+* third-party authentication
+* external services
+* database services
+
+Generate integration test scenarios including:
+
+### External Service Failures
+
+* External API unavailable
+* External API timeout
+* External API returning error
+* Invalid external service credentials
+* External service returning unexpected response
+
+### Dependency Failures
+
+* Database unavailable
+* Service dependency failure
+* Network failure during integration
+
+Each integration scenario must be **its own test case**.
+
+Integration scenarios are mandatory when external dependencies exist.
+
+---
+
+# Security Testing
+
+Include test cases for:
+
+* Unauthorized access attempts
+* Token manipulation
+* Invalid authentication headers
+* Access without authentication
+
+---
+
+# Negative Testing
+
+Generate scenarios for:
+
+* Invalid values
+* Invalid format
+* Unexpected payload
+* Corrupted request body
+
+Negative scenarios must not be grouped together.
+
+Each must be represented as a **separate test case**.
+
+---
+
+# Automation Compatibility
+
+All generated test cases must be **automation-ready**.
+
+Each test case must clearly define:
+
+* API endpoint
+* HTTP method
+* Required headers
+* Authentication token usage
+* Request payload
+* Expected HTTP response
+
+Test steps must be written so they can be **directly translated into MCP automation scripts**.
+
+---
+
+# Test Case Structure
+
+All test cases must follow this structure:
+
+Sl. No. | Test Case ID | Test Case Description | Feature | Sub Feature | Test Steps | PreCondition | Expected Result | Status
+
+---
+
+# Test Case Description Rules
+
+Every test case description must begin with:
+
+Verify that
+
+Example:
+
+Verify that an error response is returned when the Kintone App Name field is empty.
+
+---
+
+# Test Steps Writing Rules
+
+Steps must clearly describe API execution.
+
+Typical steps include:
+
+1. Open API testing tool or automation environment.
+2. Enter API endpoint.
+3. Select HTTP method.
+4. Set request headers.
+5. Provide authentication token.
+6. Enter request payload.
+7. Send API request.
+8. Verify response.
+
+Steps must remain **clear, concise, and automation-friendly**.
+
+---
+
+# Expected Result Rules
+
+Expected results must:
+
+* Clearly state HTTP status codes
+* Clearly describe response validation
+* Be written as complete sentences
+
+Avoid generic phrases such as:
+
+* Operation successful
+* API works
+* Request succeeded
+
+Example:
+
+The API should return HTTP 400 with an error message indicating that the Kintone App Name is required.
+
+
+---
+
+# Scenario Coverage Requirement
+
+Unless explicitly instructed otherwise, always include:
+
+* Positive scenarios
+* Negative scenarios
+* Boundary scenarios
+* Authentication scenarios
+* Integration scenarios
+* Security scenarios
+
+Ensure that **every API field and system interaction is validated individually**.
+
+No meaningful validation scenario should be skipped.
+
+---
+
+# Scope Restrictions
+
+Do not generate:
+
+* UI test cases
+* UI validations
+* Cosmetic validations
+
+Focus strictly on **API behavior and backend validation logic**.
+
+---
+
+# Quality Rules
+
+Avoid:
+
+* Duplicate test cases
+* Grouped validations
+* Overly summarized scenarios
+
+Each test case must represent **one specific validation condition**.
+
+---
+
+# Expected Coverage Level
+
+When schema and API details are provided, the generated test cases should typically produce:
+
+* **40–80 test cases per API** (If That API has that much scenarios)
+* covering all field validations, authentication, integration, and response validation scenarios.
+
+### Error Handling
+
+* Server errors
+* Invalid request responses
+* Unexpected payload validation
+
+---
+
+# Automation Compatibility Rules
+
+Test cases must be **automation-ready**.
+
+Each test case must clearly specify:
+
+* API Endpoint
+* HTTP Method
+* Headers
+* Authentication method
+* Request payload
+* Response verification
+
+Test steps must be written in a way that can be **translated directly into automation scripts** using **MCP configuration**.
+
+---
+
+
+# Requirement Input Rules
+
+Requirements may be provided in the following formats:
+
+* Plain text
+* API documentation
+* Google document content
+* Screenshots from Figma
+* Excel sheets
+* Google sheets
+* API request / response samples
+
+Analyze the requirement thoroughly and identify:
+
+* API functionality
+* Required inputs
+* Validation rules
+* Possible error conditions
+
+---
+
+# Test Case Format
+
+All generated test cases must follow this structure:
+
+| Sl. No. | Test Case ID | Test Case Description | Feature | Sub Feature | Test Steps | PreCondition | Expected Result | Status |
+
+---
+
+# Test Case Field Guidelines
+
+### Sl. No.
+
+Sequential numbering starting from **1**.
+
+---
+
+### Test Case ID
+
+Use consistent API test case naming:
+
+```
+API_TC_01
+API_TC_02
+API_TC_03
+```
+
+---
+
+### Test Case Description
+
+Must always begin with:
+
+**"Verify that"**
+
+Example:
+
+Verify that the Seminar Set API can be called successfully with valid inputs.
+
+---
+
+### Feature
+
+The **API name or main feature**.
+
+Examples:
+
+* Seminar Set API
+* User Registration API
+* Authentication API
+
+---
+
+### Sub Feature
+
+Specific validation area.
+
+Examples:
+
+* Success Response
+* Invalid Token
+* Missing Parameter
+* Schema Validation
+* Authorization Validation
+* Error Response
+
+---
+
+### Test Steps
+
+Steps must clearly describe how to execute the API.
+
+Typical steps include:
+
+1. Open API testing tool or automation environment.
+2. Enter API endpoint.
+3. Select HTTP method.
+4. Set request headers.
+5. Provide authentication token.
+6. Enter request payload if required.
+7. Send the API request.
+8. Verify the response.
+
+Steps must be **clear, concise, and automation-friendly**.
+
+---
+
+### PreCondition
+
+Conditions that must be satisfied before executing the test.
+
+Examples:
+
+* Valid API authentication token exists.
+* Required data exists in the system.
+* API service is available.
+
+---
+
+### Expected Result
+
+Expected Results must:
+
+* Be written as **complete sentences**
+* Clearly describe the **system response**
+* Include **HTTP status codes**
+* Include **response body validation when applicable**
+
+Avoid generic phrases such as:
+
+* Operation successful
+* Should work
+* Should display result
+
+Example:
+
+```
+The API should return HTTP/1.1 200 OK with Content-Type application/json.
+The response body should contain the field "seminar_url" with a valid URL value.
+```
+
+---
+
+### Status
+
+Default value should be:
+
+```
+Not Executed
+```
+
+Automation execution may update it to:
+
+* Passed
+* Failed
+
+---
+
+# Writing Style
+
+* Use **practical and professional QA language**.
+* Avoid unnecessary commentary or explanations.
+* Write **clear, structured steps** suitable for automation.
+* Avoid redundant or trivial test cases.
+* Do not inflate test cases by splitting obvious validations.
+
+---
+
+# Scope Control
+
+* Only generate test cases relevant to the **provided API requirement**.
+* Do not introduce unrelated test areas.
+* Do not create cosmetic or UI-based test cases.
+* Avoid duplication of scenarios.
+
+---
+
+If the user explicitly requests **"Only Positive scenarios"**, generate **positive test cases only**.
+
+Otherwise, include:
+
+* Positive scenarios
+* Negative scenarios
+* Boundary scenarios
+* Error handling scenarios.
+
+---------------------------------------------------------------------------
+
+# API Automation Cursor Rules (Playwright + TypeScript)
+
+## 0. New API automation project bootstrap (empty folder)
+
+When the user asks to **start a new API automation project** (including in an **empty** workspace or folder):
+
+1. **Preview first:** Present a short preview of the folder structure and minimal files to create (for example: `package.json`, `playwright.config.ts`, `tests/utils/config.ts`, `.env.example`, `data/data.yaml`, `tests/api/` for spec files, optional `scripts/`). Wait for user confirmation if they want to review before any writes.
+2. **Intake before endpoint tests:** After scaffolding (or if the user skips scaffold), ask the **intake questions** in section 0.1 below **before** writing API tests that target real endpoints.
+3. **No tests without inputs:** Do **not** implement concrete API tests until the user provides a **Markdown API design document** and/or **test cases** (JSON/Excel may exist as reference for case writing; execution remains explicit in spec files).
+4. **Rules or large edits:** When the user requests updates to `.cursorrules` or large scaffolding changes, show a **concise preview** of what will change, then apply **only after** the user confirms.
+
+### 0.1 Intake questions (ask until answered or explicitly deferred)
+
+* **Environments:** Base URL(s) for dev/staging/prod—which environment to automate first?
+* **Authentication:** Login or token flow (endpoints, headers, grant type); VPN/IP allowlist if any.
+* **APIs in scope:** Names, HTTP methods, paths, purpose; idempotency or rate limits if known.
+* **Contracts:** Where field rules live (Markdown design doc, OpenAPI, samples).
+* **Data & accounts:** Test users/roles and permissions; seed data or cleanup expectations.
+* **Failures & integrations:** External dependencies; expected status codes and error body shape when documented.
+* **Execution:** Local only vs CI later; secrets via `.env` (never commit secrets).
+* **Test case source:** Design doc only vs JSON/Excel test cases first—clarify reference-only use for automation.
+
+---
+
+## 1. Scope
+
+* API automation only (NO UI tests)
+* Use Playwright with TypeScript
+* Keep code **minimal, readable, and reusable**
+
+---
+
+## 2. Test case source (IMPORTANT)
+
+* Files under `test-cases/<API_NAME>-test-cases.json` are **for reference only** when writing automation.
+* **Do NOT** use JSON (or Excel) to drive execution—**no** loop-based or dynamically generated tests over case files.
+* **Do NOT** create extra scenarios beyond provided test cases or the agreed design doc.
+* Each test case must be written **explicitly** as a separate `test()`.
+* If a test case is NOT automatable:
+
+  * Skip implementation
+  * Add a comment in code: `Not feasible for automation`
+
+---
+
+## 3. Project structure
+
+* tests/
+* tests/api/ (spec files: `<api-name>.spec.ts` or project naming convention)
+* tests/utils/
+* test-cases/
+* scripts/
+* data/data.yaml
+
+---
+
+## 4. Data management
+
+* Use `data/data.yaml` for:
+
+  * access_token
+  * refresh_token
+  * reusable entity IDs (userId, campaignId, etc.)
+
+### Rules:
+
+* **Do NOT** overuse `data.yaml` for simple static inputs that do not need reuse.
+* Use `data.yaml` for **reusable and cross-test** data (tokens, IDs created in earlier tests).
+* **Do NOT** hardcode **secrets**; use environment variables / `.env` as configured in `config.ts`.
+* For CRUD:
+
+  * CREATE → store created IDs in `data.yaml` when subsequent tests need them
+  * READ/UPDATE/DELETE → reuse the same data
+
+---
+
+## 5. Authentication handling
+
+* Use login API in `beforeAll()` where applicable.
+* Extract and store the token (in memory or `data.yaml` if reuse across files/sessions is needed).
+* Reuse the token across tests; refresh only if required.
+
+---
+
+## 6. MCP-based API pattern (minimal)
+
+* Use a **lightweight** pattern: **one** reusable API request function (or a small, clear set) in `tests/utils/`.
+* Avoid complex frameworks, many abstraction layers, and unnecessary utilities.
+
+---
+
+## 7. Config management
+
+* Use `tests/utils/config.ts`
+* Load environment variables using dotenv
+* Centralize:
+
+  * baseURL
+  * headers
+  * auth handling
+
+---
+
+## 8. Test implementation rules
+
+### General:
+
+* One test case = one `test()`
+* Test name and Test Case ID must match test case description
+* Write tests **explicitly** (no dynamic generation from JSON loops)
+
+### Execution:
+
+* Use `beforeAll` for:
+
+  * `APIRequestContext` initialization
+  * Login and token setup
+
+### Inside each test:
+
+* Call the API using the reusable request helper
+* Validate the response
+
+---
+
+## 9. Validation rules
+
+### Must validate:
+
+* HTTP status code
+* Relevant response fields only
+
+### Optional:
+
+* Schema validation (only if needed)
+
+### Avoid:
+
+* Over-validation
+* Redundant assertions
+
+---
+
+## 10. Dynamic data strategy
+
+* Generate dynamic data only when required (for example, unique email).
+* Reuse data where possible instead of creating duplicate test data.
+
+---
+
+## 11. Code quality rules
+
+### MUST:
+
+* Keep code clean, minimal, and readable
+* Use reusable logic where needed
+* Follow TypeScript best practices
+
+### MUST NOT:
+
+* Use loops to execute tests from case files
+* Generate dynamic tests from external case lists
+* Over-engineer the solution
+* Duplicate request logic unnecessarily
+* Hardcode sensitive data
+
+---
+
+## 12. Logging
+
+* Log only essential details:
+
+  * Request (method, endpoint)
+  * Response (status)
+
+* Avoid excessive logging
+
+---
+
+## 13. Error handling
+
+* Validate expected error responses only
+* Do not add unnecessary exception handling
+
+---
+
+## 14. Excel integration
+
+* JSON (and Excel, if used) is for **reference** and **reporting/export** when generating or tracking cases.
+* **Do NOT** use Excel in test execution.
+* Automation executes **explicit** tests in spec files, not spreadsheets.
+
+---
+
+## 15. Reusability
+
+* Reuse data across CRUD operations
+* Avoid creating duplicate test data when the same record can be reused
+* Maintain simple, consistent patterns; use `data.yaml` for shared state when it genuinely helps
+
+---
+
+## 16. Naming conventions
+
+* Files: `<api-name>.spec.ts`
+* Functions: camelCase
+* Variables: meaningful and consistent
+
+---
+
+## 17. Final principles
+
+* **Explicit tests > Dynamic tests**
+* Minimal code > Complex code
+* Clarity > Over-abstraction
+* Reusability > Duplication
+* Only automate what is necessary
+
