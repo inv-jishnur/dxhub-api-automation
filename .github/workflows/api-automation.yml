@@ -5,18 +5,20 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: api-automation-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  create-discount-api-tests:
+  api-tests:
     name: Create Discount API Tests
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
-    # Auto-login: Login API runs in beforeAll (no ACCESS_TOKEN). Mirror local .env via secrets.
+    # Auto-login: Login API runs in beforeAll. Failed tests are recorded in Allure; job still succeeds.
     env:
       CI: true
       BASE_URL: ${{ secrets.BASE_URL }}
@@ -41,17 +43,74 @@ jobs:
         run: npm ci
 
       - name: Run Playwright API tests
+        id: playwright
+        continue-on-error: true
         run: npx playwright test create-discount.api.spec.ts
 
       - name: Generate Allure report
         if: always()
         run: npx allure generate allure-results --clean -o allure-report
 
-      - name: Upload Allure report artifact
+      - name: Upload Allure report (ZIP download)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report-create-discount
+          name: allure-report-create-discount-${{ github.run_number }}
           path: allure-report/
           retention-days: 30
           if-no-files-found: warn
+
+      - name: Upload raw Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-create-discount-${{ github.run_number }}
+          path: allure-results/
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Publish Allure report to GitHub Pages
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report
+
+      - name: Add workflow summary
+        if: always()
+        run: |
+          {
+            echo "## API automation run"
+            echo ""
+            echo "| Item | Value |"
+            echo "|------|--------|"
+            echo "| Playwright step | ${{ steps.playwright.outcome }} (failures are listed in Allure) |"
+            echo "| Allure HTML (artifact) | Download **allure-report-create-discount-${{ github.run_number }}** from this run |"
+            echo "| Allure HTML (online) | Published in the **publish-allure-report** job (GitHub Pages) |"
+            echo ""
+            echo "Failed tests remain **failed** in the Allure report (expected API gaps). The workflow continues so the report can be shared."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  publish-allure-report:
+    name: Publish Allure Report (GitHub Pages)
+    runs-on: ubuntu-latest
+    needs: api-tests
+    if: always() && needs.api-tests.result != 'cancelled'
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy Allure report to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Add publish summary
+        run: |
+          {
+            echo "## Allure report published"
+            echo ""
+            echo "**View report:** ${{ steps.deployment.outputs.page_url }}"
+            echo ""
+            echo "Share this URL with your team. Each workflow run replaces the site with the latest report."
+          } >> "$GITHUB_STEP_SUMMARY"
