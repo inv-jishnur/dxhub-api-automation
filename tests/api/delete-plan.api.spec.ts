@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { apiRequest, loginAccessToken } from '../utils/api-request';
 import { headers, planProviderCollectionUrl } from '../utils/config';
-import { planProviderItemUrl, readCreatedPlanId, validPlanBody, withUniquePlanFields } from '../utils/plan';
+import { buildPlanBody, planProviderItemUrl, readCreatedPlanId } from '../utils/plan';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -13,7 +13,7 @@ test.describe('Delete Plan API', () => {
     token = await loginAccessToken(request);
     const createRes = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody }),
+      data: buildPlanBody(),
     });
     expect([200, 201]).toContain(createRes.status());
     planId = await readCreatedPlanId(createRes);

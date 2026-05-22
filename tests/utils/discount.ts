@@ -14,8 +14,16 @@ export const validDiscountBody = {
 } as const;
 
 export const discountUniqueFieldRules: readonly UniqueFieldRule[] = [
-  { key: 'code', toUnique: (_base, suffix) => `DC${suffix}`.slice(0, 50) },
-  { key: 'name', toUnique: (base, suffix) => (base + suffix).slice(0, 250) },
+  {
+    key: 'code',
+    maxLength: 50,
+    toUnique: (_base, suffix) => `DC${suffix}`.slice(0, 50),
+  },
+  {
+    key: 'name',
+    maxLength: 250,
+    toUnique: (base, suffix) => (base + suffix).slice(0, 250),
+  },
 ];
 
 export function withUniqueDiscountFields<T extends Record<string, unknown>>(body: T): T {

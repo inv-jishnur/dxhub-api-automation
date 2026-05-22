@@ -1,14 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { apiRequest, loginAccessToken } from '../utils/api-request';
-import { headers, planProviderCollectionUrl, providerId } from '../utils/config';
-import { validPlanBody, withUniquePlanFields } from '../utils/plan';
-
-const NAME_251 = 'A'.repeat(251);
-const NAME_250 = 'A'.repeat(250);
-const CODE_101 = 'A'.repeat(101);
-const CODE_100 = 'A'.repeat(100);
-const DESC_256 = 'A'.repeat(256);
-const DESC_255 = 'A'.repeat(255);
+import { headers, planProviderCollectionUrl } from '../utils/config';
+import {
+  buildPlanBody,
+  buildPlanBodyAtMaxLength,
+  buildPlanBodyOverMaxLength,
+  validPlanBody,
+} from '../utils/plan';
 
 test.describe('Create Plan API', () => {
   let token: string;
@@ -22,7 +20,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody }),
+      data: buildPlanBody(),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -32,14 +30,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: {
-        plan_name: 'ValidPlanName',
-        plan_code: 'VALID_CODE',
-        type: 1,
-        plan_type: 1,
-        billing_type: 1,
-        description: 'Valid description',
-      },
+      data: buildPlanBody({}, ['provider']),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -49,10 +40,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({
-        ...validPlanBody,
-        provider: null as unknown as number,
-      }),
+      data: buildPlanBody({ provider: null as unknown as number }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -62,10 +50,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({
-        ...validPlanBody,
-        provider: '9' as unknown as number,
-      }),
+      data: buildPlanBody({ provider: '9' as unknown as number }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -75,7 +60,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, provider: 999999999 }),
+      data: buildPlanBody({ provider: 999999999 }),
     });
     expect([400, 404]).toContain(res.status());
   });
@@ -85,14 +70,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: {
-        provider: providerId,
-        plan_code: 'VALID_CODE',
-        type: 1,
-        plan_type: 1,
-        billing_type: 1,
-        description: 'Valid description',
-      },
+      data: buildPlanBody({}, ['plan_name']),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -102,10 +80,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({
-        ...validPlanBody,
-        plan_name: null as unknown as string,
-      }),
+      data: buildPlanBody({ plan_name: null as unknown as string }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -115,7 +90,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, plan_name: NAME_251 }),
+      data: buildPlanBodyOverMaxLength('plan_name', 250),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -123,18 +98,9 @@ test.describe('Create Plan API', () => {
   test('[API_TC_025] Verify that the Create Plan API accepts plan_name with length exactly equal to 250 characters.', async ({
     request,
   }) => {
-    const code = `C${Date.now()}`.slice(0, 100);
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: {
-        provider: providerId,
-        plan_name: NAME_250,
-        plan_code: code,
-        type: 1,
-        plan_type: 1,
-        billing_type: 1,
-        description: 'Valid description',
-      },
+      data: buildPlanBodyAtMaxLength('plan_name', 250),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -144,14 +110,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: {
-        provider: providerId,
-        plan_name: 'ValidPlanName',
-        type: 1,
-        plan_type: 1,
-        billing_type: 1,
-        description: 'Valid description',
-      },
+      data: buildPlanBody({}, ['plan_code']),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -161,10 +120,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({
-        ...validPlanBody,
-        plan_code: null as unknown as string,
-      }),
+      data: buildPlanBody({ plan_code: null as unknown as string }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -174,7 +130,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, plan_code: CODE_101 }),
+      data: buildPlanBodyOverMaxLength('plan_code', 100),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -182,18 +138,9 @@ test.describe('Create Plan API', () => {
   test('[API_TC_029] Verify that the Create Plan API accepts plan_code with length exactly equal to 100 characters.', async ({
     request,
   }) => {
-    const name = `ValidPlanName${Date.now()}`.slice(0, 250);
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: {
-        provider: providerId,
-        plan_name: name,
-        plan_code: CODE_100,
-        type: 1,
-        plan_type: 1,
-        billing_type: 1,
-        description: 'Valid description',
-      },
+      data: buildPlanBodyAtMaxLength('plan_code', 100),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -203,14 +150,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: {
-        provider: providerId,
-        plan_name: 'ValidPlanName',
-        plan_code: 'VALID_CODE',
-        plan_type: 1,
-        billing_type: 1,
-        description: 'Valid description',
-      },
+      data: buildPlanBody({}, ['type']),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -220,10 +160,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({
-        ...validPlanBody,
-        type: null as unknown as number,
-      }),
+      data: buildPlanBody({ type: null as unknown as number }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -233,7 +170,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, type: 99 }),
+      data: buildPlanBody({ type: 99 }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -243,10 +180,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({
-        ...validPlanBody,
-        type: '1' as unknown as number,
-      }),
+      data: buildPlanBody({ type: '1' as unknown as number }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -254,7 +188,7 @@ test.describe('Create Plan API', () => {
   test('[API_TC_034] Verify that the Create Plan API accepts type value 1 (Origin).', async ({ request }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, type: 1 }),
+      data: buildPlanBody({ type: 1 }),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -262,7 +196,7 @@ test.describe('Create Plan API', () => {
   test('[API_TC_035] Verify that the Create Plan API accepts type value 2 (Recharge).', async ({ request }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, type: 2 }),
+      data: buildPlanBody({ type: 2 }),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -272,14 +206,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: {
-        provider: providerId,
-        plan_name: 'ValidPlanName',
-        plan_code: 'VALID_CODE',
-        type: 1,
-        billing_type: 1,
-        description: 'Valid description',
-      },
+      data: buildPlanBody({}, ['plan_type']),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -289,10 +216,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({
-        ...validPlanBody,
-        plan_type: null as unknown as number,
-      }),
+      data: buildPlanBody({ plan_type: null as unknown as number }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -302,7 +226,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, plan_type: 10 }),
+      data: buildPlanBody({ plan_type: 10 }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -310,7 +234,7 @@ test.describe('Create Plan API', () => {
   test('[API_TC_039] Verify that the Create Plan API accepts plan_type value 1 (Data).', async ({ request }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, plan_type: 1 }),
+      data: buildPlanBody({ plan_type: 1 }),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -318,7 +242,7 @@ test.describe('Create Plan API', () => {
   test('[API_TC_040] Verify that the Create Plan API accepts plan_type value 2 (Voice).', async ({ request }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, plan_type: 2 }),
+      data: buildPlanBody({ plan_type: 2 }),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -326,7 +250,7 @@ test.describe('Create Plan API', () => {
   test('[API_TC_041] Verify that the Create Plan API accepts plan_type value 3 (Combo).', async ({ request }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, plan_type: 3 }),
+      data: buildPlanBody({ plan_type: 3 }),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -336,14 +260,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: {
-        provider: providerId,
-        plan_name: 'ValidPlanName',
-        plan_code: 'VALID_CODE',
-        type: 1,
-        plan_type: 1,
-        description: 'Valid description',
-      },
+      data: buildPlanBody({}, ['billing_type']),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -353,10 +270,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({
-        ...validPlanBody,
-        billing_type: null as unknown as number,
-      }),
+      data: buildPlanBody({ billing_type: null as unknown as number }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -366,7 +280,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, billing_type: 5 }),
+      data: buildPlanBody({ billing_type: 5 }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -374,7 +288,7 @@ test.describe('Create Plan API', () => {
   test('[API_TC_045] Verify that the Create Plan API accepts billing_type value 1 (Prepaid).', async ({ request }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, billing_type: 1 }),
+      data: buildPlanBody({ billing_type: 1 }),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -382,7 +296,7 @@ test.describe('Create Plan API', () => {
   test('[API_TC_046] Verify that the Create Plan API accepts billing_type value 2 (Postpaid).', async ({ request }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, billing_type: 2 }),
+      data: buildPlanBody({ billing_type: 2 }),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -392,14 +306,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: {
-        provider: providerId,
-        plan_name: 'ValidPlanName',
-        plan_code: 'VALID_CODE',
-        type: 1,
-        plan_type: 1,
-        billing_type: 1,
-      },
+      data: buildPlanBody({}, ['description']),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -409,10 +316,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({
-        ...validPlanBody,
-        description: null as unknown as string,
-      }),
+      data: buildPlanBody({ description: null as unknown as string }),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -422,7 +326,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, description: DESC_256 }),
+      data: buildPlanBodyOverMaxLength('description', 255),
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -432,7 +336,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody, description: DESC_255 }),
+      data: buildPlanBodyAtMaxLength('description', 255),
     });
     expect([200, 201]).toContain(res.status());
   });
@@ -440,7 +344,7 @@ test.describe('Create Plan API', () => {
   test('[API_TC_051] Verify that an error is returned when the Create Plan request contains unexpected extra fields not defined in the contract.', async ({
     request,
   }) => {
-    const base = withUniquePlanFields({ ...validPlanBody });
+    const base = buildPlanBody();
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
       data: { ...base, unexpected_field_xyz: true },
@@ -476,7 +380,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers('not-a-real-jwt'),
-      data: withUniquePlanFields({ ...validPlanBody }),
+      data: buildPlanBody(),
     });
     expect(res.status()).toBe(401);
   });
@@ -486,7 +390,7 @@ test.describe('Create Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: { ...headers(token), 'Content-Type': 'text/plain' },
-      data: JSON.stringify(withUniquePlanFields({ ...validPlanBody })),
+      data: JSON.stringify(buildPlanBody()),
     });
     expect([400, 415]).toContain(res.status());
   });

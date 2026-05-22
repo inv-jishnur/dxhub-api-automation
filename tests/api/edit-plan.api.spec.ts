@@ -1,9 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { apiRequest, loginAccessToken } from '../utils/api-request';
 import { headers, planProviderCollectionUrl } from '../utils/config';
-import { planProviderItemUrl, readCreatedPlanId, validPlanBody, withUniquePlanFields } from '../utils/plan';
-
-const A = (n: number) => 'A'.repeat(n);
+import {
+  buildPlanBody,
+  planProviderItemUrl,
+  readCreatedPlanId,
+  stringAtExactLength,
+} from '../utils/plan';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -15,7 +18,7 @@ test.describe('Edit Plan API', () => {
     token = await loginAccessToken(request);
     const createRes = await apiRequest(request, 'POST', planProviderCollectionUrl, {
       headers: headers(token),
-      data: withUniquePlanFields({ ...validPlanBody }),
+      data: buildPlanBody(),
     });
     expect([200, 201]).toContain(createRes.status());
     planId = await readCreatedPlanId(createRes);
@@ -34,7 +37,7 @@ test.describe('Edit Plan API', () => {
   test('[API_TC_059] Verify that the Edit Plan API updates successfully when all schema fields are sent with valid values.', async ({
     request,
   }) => {
-    const body = withUniquePlanFields({ ...validPlanBody, plan_name: 'FullUpdate' });
+    const body = buildPlanBody({ plan_name: 'FullUpdate' });
     const res = await apiRequest(request, 'PATCH', planProviderItemUrl(planId), {
       headers: headers(token),
       data: body,
@@ -57,7 +60,7 @@ test.describe('Edit Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'PATCH', planProviderItemUrl(planId), {
       headers: headers(token),
-      data: { plan_name: A(251) },
+      data: { plan_name: stringAtExactLength(251) },
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -67,7 +70,7 @@ test.describe('Edit Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'PATCH', planProviderItemUrl(planId), {
       headers: headers(token),
-      data: { plan_code: A(101) },
+      data: { plan_code: stringAtExactLength(101) },
     });
     expect([400, 422]).toContain(res.status());
   });
@@ -107,7 +110,7 @@ test.describe('Edit Plan API', () => {
   }) => {
     const res = await apiRequest(request, 'PATCH', planProviderItemUrl(planId), {
       headers: headers(token),
-      data: { description: A(256) },
+      data: { description: stringAtExactLength(256) },
     });
     expect([400, 422]).toContain(res.status());
   });

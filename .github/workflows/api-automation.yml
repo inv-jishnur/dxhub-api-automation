@@ -18,8 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     outputs:
-      workflow_status: ${{ steps.run-summary.outputs.workflow_status }}
-      exec_summary: ${{ steps.run-summary.outputs.exec_summary }}
+      test_total: ${{ steps.run-summary.outputs.test_total }}
+      test_passed: ${{ steps.run-summary.outputs.test_passed }}
+      test_failed: ${{ steps.run-summary.outputs.test_failed }}
+      test_duration: ${{ steps.run-summary.outputs.test_duration }}
       artifact_name: ${{ steps.run-summary.outputs.artifact_name }}
 
     # Auto-login: Login API runs in beforeAll. Failed tests are recorded in Allure; job still succeeds.
@@ -59,22 +61,30 @@ jobs:
         id: run-summary
         if: always()
         run: |
-          PLAYWRIGHT_OUTCOME="${{ steps.playwright.outcome }}"
-          if [ "${PLAYWRIGHT_OUTCOME}" = "success" ]; then
-            echo "workflow_status=Success" >> "${GITHUB_OUTPUT}"
-          else
-            echo "workflow_status=Completed with test failures" >> "${GITHUB_OUTPUT}"
-          fi
+          TOTAL="0"
+          PASSED="0"
+          FAILED="0"
+          DURATION="N/A"
 
-          EXEC_SUMMARY="Playwright step: ${PLAYWRIGHT_OUTCOME}"
           if [ -f allure-report/widgets/summary.json ]; then
             PASSED=$(jq -r '.statistic.passed // 0' allure-report/widgets/summary.json)
             FAILED=$(jq -r '.statistic.failed // 0' allure-report/widgets/summary.json)
-            SKIPPED=$(jq -r '.statistic.skipped // 0' allure-report/widgets/summary.json)
             TOTAL=$(jq -r '.statistic.total // 0' allure-report/widgets/summary.json)
-            EXEC_SUMMARY="Total: ${TOTAL} | Passed: ${PASSED} | Failed: ${FAILED} | Skipped: ${SKIPPED} (Playwright: ${PLAYWRIGHT_OUTCOME})"
+            DURATION_MS=$(jq -r '.time.duration // 0' allure-report/widgets/summary.json)
+            SECS=$((DURATION_MS / 1000))
+            MIN=$((SECS / 60))
+            SEC=$((SECS % 60))
+            if [ "${MIN}" -gt 0 ]; then
+              DURATION="${MIN}m ${SEC}s"
+            else
+              DURATION="${SEC}s"
+            fi
           fi
-          echo "exec_summary=${EXEC_SUMMARY}" >> "${GITHUB_OUTPUT}"
+
+          echo "test_total=${TOTAL}" >> "${GITHUB_OUTPUT}"
+          echo "test_passed=${PASSED}" >> "${GITHUB_OUTPUT}"
+          echo "test_failed=${FAILED}" >> "${GITHUB_OUTPUT}"
+          echo "test_duration=${DURATION}" >> "${GITHUB_OUTPUT}"
           echo "artifact_name=allure-report-create-discount-${GITHUB_RUN_NUMBER}" >> "${GITHUB_OUTPUT}"
 
       - name: Upload Allure report (ZIP download)
@@ -153,27 +163,34 @@ jobs:
 
           RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           REPO="${GITHUB_REPOSITORY}"
-          WORKFLOW_STATUS="${{ needs.api-tests.outputs.workflow_status }}"
-          EXEC_SUMMARY="${{ needs.api-tests.outputs.exec_summary }}"
-          ARTIFACT_NAME="${{ needs.api-tests.outputs.artifact_name }}"
+          TOTAL="${{ needs.api-tests.outputs.test_total }}"
+          PASSED="${{ needs.api-tests.outputs.test_passed }}"
+          FAILED="${{ needs.api-tests.outputs.test_failed }}"
+          DURATION="${{ needs.api-tests.outputs.test_duration }}"
           ALLURE_URL="${{ steps.deployment.outputs.page_url }}"
 
-          if [ "${{ steps.deployment.outcome }}" = "success" ] && [ -n "${ALLURE_URL}" ]; then
-            ALLURE_LINE="*Allure report (HTML):* ${ALLURE_URL}"
-          else
-            ALLURE_LINE="*Allure report (HTML):* unavailable (Pages deploy did not complete). Download artifact *${ARTIFACT_NAME}* from ${RUN_URL}"
+          if [ "${{ steps.deployment.outcome }}" != "success" ] || [ -z "${ALLURE_URL}" ]; then
+            ALLURE_URL="(unavailable — see artifact on ${RUN_URL})"
           fi
 
           MESSAGE=$(printf '%s\n' \
-            '*API Automation — GitHub Actions*' \
+            '🚀 API Automation Execution Completed' \
             '' \
-            "*Workflow status:* ${WORKFLOW_STATUS}" \
-            "*Repository:* ${REPO}" \
-            "*Execution summary:* ${EXEC_SUMMARY}" \
-            "*GitHub Actions run:* ${RUN_URL}" \
+            '📦 Module: Create Discount API' \
+            '🔄 Workflow: Create Discount API Tests' \
+            "📁 Repository: ${REPO}" \
             '' \
-            "${ALLURE_LINE}" \
-            "*Allure artifact:* ${ARTIFACT_NAME} (Actions → Artifacts)")
+            '📊 Execution Summary:' \
+            "• Total Tests: ${TOTAL}" \
+            "• Passed: ${PASSED}" \
+            "• Failed: ${FAILED}" \
+            "• Duration: ${DURATION}" \
+            '' \
+            '📄 Allure Report:' \
+            "${ALLURE_URL}" \
+            '' \
+            '🔗 GitHub Actions Run:' \
+            "${RUN_URL}")
 
           PAYLOAD=$(jq -n --arg text "${MESSAGE}" '{text: $text}')
 
