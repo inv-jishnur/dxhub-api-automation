@@ -51,6 +51,58 @@ jobs:
         if: always()
         run: npx allure generate allure-results --clean -o allure-report
 
+      - name: Send Google Chat notification
+        if: always()
+        env:
+          GOOGLE_CHAT_WEBHOOK: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
+        run: |
+          if [ -z "${GOOGLE_CHAT_WEBHOOK}" ]; then
+            echo "GOOGLE_CHAT_WEBHOOK secret is not set; skipping Google Chat notification."
+            exit 0
+          fi
+
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          REPO="${GITHUB_REPOSITORY}"
+          PLAYWRIGHT_OUTCOME="${{ steps.playwright.outcome }}"
+          ARTIFACT_NAME="allure-report-create-discount-${GITHUB_RUN_NUMBER}"
+
+          if [ "${PLAYWRIGHT_OUTCOME}" = "success" ]; then
+            WORKFLOW_STATUS="Success"
+          else
+            WORKFLOW_STATUS="Completed with test failures"
+          fi
+
+          EXEC_SUMMARY="Playwright step: ${PLAYWRIGHT_OUTCOME}"
+          if [ -f allure-report/widgets/summary.json ]; then
+            PASSED=$(jq -r '.statistic.passed // 0' allure-report/widgets/summary.json)
+            FAILED=$(jq -r '.statistic.failed // 0' allure-report/widgets/summary.json)
+            SKIPPED=$(jq -r '.statistic.skipped // 0' allure-report/widgets/summary.json)
+            TOTAL=$(jq -r '.statistic.total // 0' allure-report/widgets/summary.json)
+            EXEC_SUMMARY="Total: ${TOTAL} | Passed: ${PASSED} | Failed: ${FAILED} | Skipped: ${SKIPPED} (Playwright: ${PLAYWRIGHT_OUTCOME})"
+          fi
+
+          MESSAGE=$(printf '%s\n' \
+            '*API Automation — GitHub Actions*' \
+            '' \
+            "*Workflow status:* ${WORKFLOW_STATUS}" \
+            "*Repository:* ${REPO}" \
+            "*Execution summary:* ${EXEC_SUMMARY}" \
+            "*GitHub Actions run:* ${RUN_URL}" \
+            '' \
+            "*Allure report:* The HTML report artifact *${ARTIFACT_NAME}* is available on this workflow run (Actions → Artifacts). See the *publish-allure-report* job for the GitHub Pages link when enabled.")
+
+          PAYLOAD=$(jq -n --arg text "${MESSAGE}" '{text: $text}')
+
+          if ! curl -fsS -X POST \
+            -H "Content-Type: application/json; charset=UTF-8" \
+            -d "${PAYLOAD}" \
+            "${GOOGLE_CHAT_WEBHOOK}"; then
+            echo "::warning::Google Chat webhook notification failed."
+            exit 0
+          fi
+
+          echo "Google Chat notification sent successfully."
+
       - name: Upload Allure report (ZIP download)
         if: always()
         uses: actions/upload-artifact@v4
