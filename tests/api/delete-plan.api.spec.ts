@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { assertHttpStatus } from '../utils/allure-api';
 import { apiRequest, loginAccessToken } from '../utils/api-request';
 import { headers, planProviderCollectionUrl } from '../utils/config';
 import { buildPlanBody, planProviderItemUrl, readCreatedPlanId } from '../utils/plan';
@@ -15,7 +16,7 @@ test.describe('Delete Plan API', () => {
       headers: headers(token),
       data: buildPlanBody(),
     });
-    expect([200, 201]).toContain(createRes.status());
+    await assertHttpStatus(createRes, [200, 201]);
     planId = await readCreatedPlanId(createRes);
   });
 
@@ -32,14 +33,14 @@ test.describe('Delete Plan API', () => {
     request,
   }) => {
     const res = await apiRequest(request, 'GET', planProviderItemUrl(planId), { headers: headers(token) });
-    expect([200, 404, 405]).toContain(res.status());
+    await assertHttpStatus(res, [200, 404, 405]);
   });
 
   test('[API_TC_070] Verify that the Delete Plan API removes the plan when a valid plan_id and token are provided.', async ({
     request,
   }) => {
     const res = await apiRequest(request, 'DELETE', planProviderItemUrl(planId), { headers: headers(token) });
-    expect([200, 204]).toContain(res.status());
+    await assertHttpStatus(res, [200, 204]);
   });
 
   test('[API_TC_071] Verify that an error is returned when deleting a non-existent plan_id.', async ({ request }) => {

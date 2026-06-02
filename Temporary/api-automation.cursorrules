@@ -1,0 +1,469 @@
+# API Automation Cursor Rules (Playwright + TypeScript)
+# Portable rules — copy this file to `.cursorrules` or `.cursor/rules/` in any new API automation project.
+# Version: includes test-data safeguards learned from DXHUB API Automation (duplicate payloads, null/boundary handling).
+
+---
+
+## 0. New API automation project bootstrap (empty folder)
+
+When the user asks to **start a new API automation project** (including in an **empty** workspace or folder):
+
+1. **Preview first:** Present a short preview of the folder structure and minimal files to create (for example: `package.json`, `playwright.config.ts`, `tests/utils/config.ts`, `.env.example`, `data/data.yaml`, `tests/api/` for spec files, optional `scripts/`). Wait for user confirmation if they want to review before any writes.
+2. **Intake before endpoint tests:** After scaffolding (or if the user skips scaffold), ask the **intake questions** in section 0.1 below **before** writing API tests that target real endpoints.
+3. **No tests without inputs:** Do **not** implement concrete API tests until the user provides an **API design document** and/or **documented test cases**. Test case artifacts (any format) are for reference when writing automation; execution remains explicit in spec files.
+4. **Rules or large edits:** When the user requests updates to `.cursorrules` or large scaffolding changes, show a **concise preview** of what will change, then apply **only after** the user confirms.
+
+### 0.1 Intake questions (ask until answered or explicitly deferred)
+
+* **Environments:** Base URL(s) for dev/staging/prod—which environment to automate first?
+* **Authentication:** Login or token flow (endpoints, headers, grant type); VPN/IP allowlist if any.
+* **APIs in scope:** Names, HTTP methods, paths, purpose; idempotency or rate limits if known.
+* **Contracts:** Where field rules live (Markdown design doc, OpenAPI, samples).
+* **Data & accounts:** Test users/roles and permissions; seed data or cleanup expectations.
+* **Failures & integrations:** External dependencies; expected status codes and error body shape when documented.
+* **Execution:** Local only vs CI later; secrets via `.env` (never commit secrets).
+* **Test case source:** Where documented test cases and API requirements live; clarify they are **reference-only** for automation (format may vary by project).
+* **Unique fields:** Which request fields must be unique per create (e.g. `code`, `email`, `plan_name`)? What are max lengths?
+
+---
+
+## 1. Scope
+
+* API automation only (NO UI tests)
+* Use Playwright with TypeScript
+* Keep code **minimal, readable, and reusable**
+
+---
+
+## 2. Test case source (IMPORTANT)
+
+* Documented test cases (under `test-cases/` or equivalent) are **for reference only** when writing automation.
+* **Do NOT** use test case files to drive execution—**no** loop-based or dynamically generated tests over external case lists.
+* **Do NOT** create extra scenarios beyond provided test cases or the agreed design doc.
+* Each test case must be written **explicitly** as a separate `test()`.
+* If a test case is NOT automatable:
+
+  * Skip implementation
+  * Add a comment in code: `Not feasible for automation`
+
+---
+
+## 3. Project structure
+
+* tests/
+* tests/api/ (spec files: `<api-name>.spec.ts` or project naming convention)
+* tests/utils/
+  * `config.ts` — env, URLs, headers
+  * `api-request.ts` — login + single HTTP entry point
+  * `allure-api.ts` — **`assertHttpStatus`**, request/response attachments (required)
+  * `invalid-field-values.ts` — non-coercible invalid inputs for datatype negative tests (required)
+  * `test-data.ts` — **meaningful** labels, timestamps, scenario constants (required)
+  * `unique-fields.ts` — **generic** uniquify helpers (required for all projects)
+  * `<api-name>.ts` — per-API valid body, uniquify rules, body builders
+  * optional: `allure-api.ts`, `allure-global-teardown.ts`
+* test-cases/
+* scripts/
+* data/data.yaml
+
+---
+
+## 4. Data management
+
+* Use `data/data.yaml` for:
+
+  * access_token
+  * refresh_token
+  * reusable entity IDs (userId, campaignId, etc.)
+
+### Rules:
+
+* **Do NOT** overuse `data.yaml` for simple static inputs that do not need reuse.
+* Use `data.yaml` for **reusable and cross-test** data (tokens, IDs created in earlier tests).
+* **Do NOT** hardcode **secrets**; use environment variables / `.env` as configured in `config.ts`.
+* For CRUD:
+
+  * CREATE → store created IDs in `data.yaml` when subsequent tests need them
+  * READ/UPDATE/DELETE → reuse the same data
+
+---
+
+## 5. Authentication handling
+
+* Use login API in `beforeAll()` where applicable.
+* Extract and store the token (in memory or `data.yaml` if reuse across files/sessions is needed).
+* Reuse the token across tests; refresh only if required.
+* Support `ACCESS_TOKEN` in `.env` / CI to skip login when a preset token is provided.
+* Use a flexible token extractor (`access`, `access_token`, `token`, nested `data.*`) — APIs vary.
+
+---
+
+## 6. MCP-based API pattern (minimal)
+
+* Use a **lightweight** pattern: **one** reusable API request function (or a small, clear set) in `tests/utils/api-request.ts`.
+* Centralize login in `loginAccessToken(request)`.
+* Centralize HTTP calls in `apiRequest(request, method, url, { headers, data })`.
+* Avoid complex frameworks, many abstraction layers, and unnecessary utilities.
+
+---
+
+## 7. Config management
+
+* Use `tests/utils/config.ts`
+* Load environment variables using dotenv
+* Centralize:
+
+  * baseURL (console / main API)
+  * authApiBaseURL (when login lives on a different host)
+  * endpoint paths and full URLs
+  * headers and auth prefix (`AUTH_PREFIX`, e.g. `DXHUB`)
+  * test entity IDs (`PROVIDER_ID`, `SERVICE_ID`, etc.)
+
+* When auth and resource APIs use different hosts, **never** assume one `BASE_URL` for everything.
+
+---
+
+## 8. Test implementation rules
+
+### General:
+
+* One test case = one `test()`
+* Test name and Test Case ID must match test case description
+* Write tests **explicitly** (no dynamic generation from external test case lists)
+
+### Execution:
+
+* Use `beforeAll` for:
+
+  * `APIRequestContext` initialization
+  * Login and token setup
+
+* Use `test.describe.configure({ mode: 'serial' })` when tests in a file depend on order (create → edit → delete same entity).
+
+### Inside each test:
+
+* Call the API using the reusable request helper
+* Validate the response
+
+---
+
+## 9. Validation rules
+
+### Must validate:
+
+* HTTP status code
+* Relevant response fields only
+
+### Optional:
+
+* Schema validation (only if needed)
+
+### Avoid:
+
+* Over-validation
+* Redundant assertions
+
+### Assertion readability and Allure reports (MANDATORY)
+
+**Never use** `expect([400, 422]).toContain(res.status())` for HTTP status checks.
+
+Playwright swaps labels on failure, which reads **backwards** in Allure and the IDE:
+
+| Playwright shows | What it actually means |
+|------------------|------------------------|
+| `Expected value: 201` | **Actual API status** was 201 |
+| `Received array: [400, 422]` | **Allowed statuses** in your test code |
+
+So a negative test that expects 400/422 but gets 201 looks like the test “expected 201” — the opposite of intent.
+
+### Required helper: `assertHttpStatus` in `tests/utils/allure-api.ts`
+
+Use for **every** status assertion (single code or list):
+
+```typescript
+await assertHttpStatus(res, [400, 422]);
+await assertHttpStatus(res, 201);
+await assertHttpStatus(res, [200, 201], 'Optional step title for Allure');
+```
+
+On failure, Allure shows an attachment:
+
+```
+HTTP status assertion — failed
+Expected HTTP status in [400, 422], received HTTP 201
+
+Actual HTTP status: 201
+Response body:
+{ ... }
+```
+
+On pass, Allure shows: `HTTP status assertion — passed` with expected vs received in plain language.
+
+### Rules
+
+* **Do NOT** use `expect(allowed).toContain(res.status())` anywhere in API specs.
+* **Do** use `assertHttpStatus` so expected/received match human wording in Allure.
+* Single-status tests may use `assertHttpStatus(res, 401)` instead of `expect(res.status()).toBe(401)` for consistent Allure steps (optional but recommended).
+* When a test reads `res.json()` after the status check, call `assertHttpStatus` **before** reading the body on success paths only; on failure the helper may consume the body for the attachment.
+
+### Invalid datatype negative tests (MANDATORY)
+
+Do **not** use numeric strings (example: `"1"`, `"9"`, `"10"`) for negative **integer/number** datatype validation when the backend may support automatic type conversion. Those values often return **201/200** (valid after coercion), causing false failures.
+
+**Always use clearly invalid values that cannot be auto-converted**, such as:
+
+* Special characters: `"@"`
+* Alphabetic strings: `"abc"` (when field is integer)
+* Boolean: `true` / `false`
+* Array: `[]`
+* Object: `{}`
+* `null` — use a **separate** null test case, not the datatype test
+
+**Required shared helper:** `tests/utils/invalid-field-values.ts`
+
+```typescript
+import { INVALID_INT_VALUE, invalidIntegerInputs } from '../utils/invalid-field-values';
+
+// Preferred default for integer fields:
+buildPlanBody({ type: INVALID_INT_VALUE as unknown as number });
+
+// Alternatives when needed:
+invalidIntegerInputs.boolean
+invalidIntegerInputs.array
+invalidIntegerInputs.object
+```
+
+| Wrong (coercible) | Correct (non-convertible) |
+|-------------------|---------------------------|
+| `type: "1"` | `type: "@"` |
+| `provider: "9"` | `provider: "@"` |
+| `service_id: "1"` | `service_id: "@"` |
+| `discount_mode: "1"` | `discount_mode: "@"` |
+
+Apply this rule to **all current and future APIs** — not only Create Plan.
+
+---
+
+## 10. Dynamic data strategy (CRITICAL — prevents duplicate / wrong-payload failures)
+
+### 10.0 Meaningful test data (MANDATORY)
+
+All automation test data must use **meaningful, human-readable values** that clearly represent the field purpose and validation scenario. Avoid meaningless random strings or repeated characters (e.g. `AAAAAAA`, `1111111`, `TEST123`) unless the test **explicitly** requires random/noise data.
+
+**Required helper:** `tests/utils/test-data.ts`
+
+| Function | Purpose |
+|----------|---------|
+| `meaningfulTestValue(label, timestamp?)` | `ValidPlanName_1748084500` |
+| `meaningfulValueAtExactLength(length, label, timestamp?)` | Boundary tests with readable prefix + exact length |
+| `PlanDataLabels` / `DiscountDataLabels` | Scenario constants per API |
+| `normalizeDataLabel(base, fallback)` | Map legacy placeholders to meaningful labels |
+
+**Naming pattern:**
+
+```text
+<MeaningfulText>_<timestamp>
+```
+
+**Examples:**
+
+| Scenario | Example value |
+|----------|----------------|
+| Valid create | `ValidPlanName_1748084500` |
+| Max length success | `MaxLengthValidationPlanName_1748084500` |
+| Over max error | `ExceedMaxLengthValidationPlanName_1748084500` |
+| Valid code | `ValidPlanCode_1748084500` |
+| Duplicate test (fixed) | `DuplicateValidationCode` (intentionally same on retry) |
+| Special char (when needed) | `SpecialCharacterValidation_@_1748084500` |
+
+**Rules:**
+
+* Every dynamic string field → meaningful label + timestamp for uniqueness
+* Boundary / max-length → use scenario label (`MaxLengthValidation…`, `ExceedMaxLengthValidation…`)
+* Do **not** pad with repeated `A` / `1` — extend with `_Label` segments or `_` if length requires it
+* Apply across **all current and future APIs**
+
+### 10.1 Mandatory generic helper: `tests/utils/unique-fields.ts`
+
+Every project **must** include:
+
+* `withUniqueFields(body, rules, suffix?)` — uniquify only configured keys
+* `meaningfulUniqueField(key, fallbackLabel, maxLength?)` — readable uniquify rule factory
+* `UniqueFieldRule` with optional `maxLength`
+
+Re-export from `test-data.ts`: `meaningfulTestValue`, `meaningfulValueAtExactLength`, `stringAtExactLength(length, label)`
+
+**Skip uniquify (never modify) when:**
+
+* Field is explicitly `null`
+* Field is `''` (empty string negative test)
+* Field is not a `string`
+* Field length is **already greater than** `maxLength` (over-max negative test must stay over-max)
+
+### 10.2 Per-API body builders (required pattern)
+
+For each CREATE API, add `tests/utils/<api-name>.ts` with:
+
+| Helper | Purpose |
+|--------|---------|
+| `validXBody` | Schema-valid defaults |
+| `xUniqueFieldRules` | Keys + `maxLength` + `toUnique` transforms |
+| `withUniqueXFields(body)` | Wraps `withUniqueFields` |
+| `buildXBody(overrides, omitKeys?)` | Default create payload; uniquify present string fields; support missing-field tests via `omitKeys` |
+| `buildXBodyAtMaxLength(field, maxLen)` | **Success** boundary: exact max length + unique suffix |
+| `buildXBodyOverMaxLength(field, maxLen)` | **Error** boundary: length = maxLen + 1; other identifiers still unique |
+
+Example per-API wrapper (discount-style):
+
+```typescript
+function validBody(overrides = {}) {
+  return withUniqueDiscountFields({ ...validDiscountBody, ...discountDateRange(), ...overrides });
+}
+```
+
+### 10.3 Unique-field mistakes to PREVENT (mandatory)
+
+| Mistake | Wrong | Correct |
+|---------|-------|---------|
+| Static duplicate on reruns | `plan_name: 'A'.repeat(250)` every run | `stringAtExactLength(250)` or `buildBodyAtMaxLength('plan_name', 250)` |
+| Static identifiers in partial bodies | `'ValidPlanName'`, `'VALID_CODE'` while testing missing `provider` | `buildBody({}, ['provider'])` — uniquify fields still sent |
+| Null overwritten by uniquify | `plan_name: null` → timestamp string | `withUniqueFields` skips `null` / `''` |
+| Over-max truncated by uniquify | 251 chars passed through rule with `.slice(0, 250)` | Set `maxLength` on rule **and** use `buildBodyOverMaxLength` or skip uniquify when `length > maxLength` |
+| Exact-max vs over-max mixed | Same payload for TC "250 ok" and TC "251 error" | Separate helpers: `AtMaxLength` vs `OverMaxLength` |
+| Postman works once, automation fails on retry | Manual uses fresh name; automation reuses fixed value | Always uniquify API-unique fields on every **create success** test |
+
+### 10.4 When to uniquify vs when NOT to
+
+**Always uniquify** (each run) for API-unique fields on:
+
+* Create **success** tests
+* Negative tests that still send other create fields (missing/null/type tests on a different field)
+* Exact max-length **success** tests
+
+**Do NOT uniquify** (preserve value) for:
+
+* Explicit `null` tests
+* Explicit `''` empty tests
+* Over-max length negative tests (field under test)
+* Intentional duplicate tests (e.g. "duplicate code" — use fixed duplicate value by design)
+
+**PATCH / UPDATE over-max tests** on an existing entity may use fixed over-length strings (no create collision).
+
+### 10.5 Date and dynamic ranges
+
+* Use helpers like `discountDateRange()` for relative future dates — avoid hardcoded dates that expire.
+
+---
+
+## 11. Code quality rules
+
+### MUST:
+
+* Keep code clean, minimal, and readable
+* Use reusable logic where needed
+* Follow TypeScript best practices
+* Use `buildXBody` helpers in specs — **never** inline static unique-prone strings for create tests
+
+### MUST NOT:
+
+* Use loops to execute tests from external test case lists
+* Generate dynamic tests from external case lists
+* Over-engineer the solution
+* Duplicate request logic unnecessarily
+* Hardcode sensitive data
+* Pass over-max boundary values through uniquify helpers that slice to max length
+* **Do NOT** pad with repeated `A` / `1` / meaningless placeholders for create or boundary tests
+* **Do** use `meaningfulTestValue` and `PlanDataLabels` / `DiscountDataLabels` scenario constants
+
+---
+
+## 12. Logging and reporting
+
+* Log only essential details:
+
+  * Request (method, endpoint)
+  * Response (status)
+
+* Avoid excessive logging
+
+### Allure (when enabled):
+
+* Wrap login and API calls in `allure.step`
+* Attach sanitized request body and response status via shared helpers
+* Redact passwords/tokens in attachments (`sanitizePayload`)
+* Configure `allure-playwright` reporter + optional `globalTeardown` for report generation
+* Do not attach raw secrets
+
+---
+
+## 13. Error handling
+
+* Validate expected error responses only
+* Do not add unnecessary exception handling
+* On unexpected failures, inspect response body in report before changing expected status codes
+
+---
+
+## 14. Test case documentation (reference only)
+
+* Documented test cases are for **reference**, **traceability**, and **reporting/export** when generating or tracking coverage.
+* Format may vary by project (for example Markdown, spreadsheet, or structured data files).
+* **Do NOT** use test case documentation to execute tests automatically.
+* Automation executes **explicit** tests in spec files, not external case lists.
+
+---
+
+## 15. Reusability
+
+* Reuse data across CRUD operations in **serial** suites (one created entity for edit/delete/get)
+* Avoid creating duplicate test data when the same record can be reused within a file
+* Maintain simple, consistent patterns; use `data.yaml` for shared state when it genuinely helps
+* **Across separate create tests**, always generate fresh unique identifiers — do not reuse one create payload
+
+---
+
+## 16. Naming conventions
+
+* Files: `<api-name>.spec.ts`
+* Utils: `tests/utils/<api-name>.ts`, `tests/utils/unique-fields.ts`
+* Functions: camelCase — `buildPlanBody`, `withUniqueDiscountFields`, `stringAtExactLength`
+* Variables: meaningful and consistent
+
+---
+
+## 17. Playwright config defaults
+
+* `testDir: './tests/api'`
+* `workers: 1` and `fullyParallel: false` when create tests share an environment with uniqueness constraints
+* `retries: 1` locally, `2` in CI — retries **will** fail if payloads are not unique
+* `ignoreHTTPSErrors: true` when dev certs are self-signed
+* `use.baseURL` from env; relative paths in tests resolve against it
+* Reporters: `list`, `html`, optional `allure-playwright`
+
+---
+
+## 18. Spec authoring checklist (run before merging new tests)
+
+For every new CREATE test, confirm:
+
+1. [ ] Identified which fields must be unique in the API
+2. [ ] Success create uses `buildXBody()` or equivalent — not raw static `validBody` strings
+3. [ ] Missing-field test uses `buildXBody({}, ['field'])` — not manual object with static `code`/`name`
+4. [ ] Null test passes `null` through builder — uniquify skips it
+5. [ ] Exact max-length success uses `buildXBodyAtMaxLength` or `stringAtExactLength(max)`
+6. [ ] Over-max error uses `buildXBodyOverMaxLength` or `stringAtExactLength(max + 1)` — not uniquify that truncates
+7. [ ] Expected status uses `assertHttpStatus` — not `expect([...]).toContain(res.status())`
+8. [ ] Integer/number datatype negatives use `INVALID_INT_VALUE` (`"@"`) — not numeric strings like `"1"`
+9. [ ] All dynamic strings use `meaningfulTestValue` / scenario labels — not `AAAA` or `C{timestamp}` placeholders
+10. [ ] No false failures from duplicate data masking validation errors
+
+---
+
+## 19. Final principles
+
+* **Explicit tests > Dynamic tests**
+* **Unique create data > Reused static strings**
+* **Preserve null / over-max intent > Blind uniquify**
+* Minimal code > Complex code
+* Clarity > Over-abstraction
+* Reusability > Duplication (within a serial CRUD flow — not across unrelated creates)
+* Only automate what is necessary

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { assertHttpStatus } from '../utils/allure-api';
 import { apiRequest, loginAccessToken } from '../utils/api-request';
 import { headers, planProvidersUrl } from '../utils/config';
 
@@ -47,7 +48,7 @@ test.describe('Provider Plan List API', () => {
       headers: headers(token),
       data: {},
     });
-    expect([404, 405]).toContain(res.status());
+    await assertHttpStatus(res, [404, 405]);
   });
 
   test('[API_TC_016] Verify that the Provider plan list API response schema contains the expected top-level fields and data types.', async ({

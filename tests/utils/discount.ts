@@ -1,9 +1,10 @@
 import { serviceId } from './config';
-import { type UniqueFieldRule, withUniqueFields } from './unique-fields';
+import { DiscountDataLabels, meaningfulTestValue, testTimestamp } from './test-data';
+import { meaningfulUniqueField, withUniqueFields } from './unique-fields';
 
 export const validDiscountBody = {
-  code: 'SIM50',
-  name: 'Sim Welcome Discount',
+  code: DiscountDataLabels.validCode,
+  name: DiscountDataLabels.validName,
   service_id: serviceId,
   coupon_type: 1,
   discount_mode: 1,
@@ -13,22 +14,36 @@ export const validDiscountBody = {
   end_date: '2026-04-01',
 } as const;
 
-export const discountUniqueFieldRules: readonly UniqueFieldRule[] = [
-  {
-    key: 'code',
-    maxLength: 50,
-    toUnique: (_base, suffix) => `DC${suffix}`.slice(0, 50),
-  },
-  {
-    key: 'name',
-    maxLength: 250,
-    toUnique: (base, suffix) => (base + suffix).slice(0, 250),
-  },
-];
+export const discountUniqueFieldRules = [
+  meaningfulUniqueField('code', DiscountDataLabels.validCode, 50),
+  meaningfulUniqueField('name', DiscountDataLabels.validName, 250),
+] as const;
 
 export function withUniqueDiscountFields<T extends Record<string, unknown>>(body: T): T {
   return withUniqueFields(body, discountUniqueFieldRules);
 }
+
+/**
+ * Build a Create Discount payload with meaningful unique code/name.
+ * Use `omitKeys` for missing-field tests; use overrides for null/invalid/boundary values.
+ */
+export function buildDiscountBody(
+  overrides: Record<string, unknown> = {},
+  omitKeys: string[] = []
+): Record<string, unknown> {
+  const body: Record<string, unknown> = {
+    ...validDiscountBody,
+    ...discountDateRange(),
+    ...overrides,
+  };
+  for (const key of omitKeys) {
+    delete body[key];
+  }
+  return withUniqueDiscountFields(body);
+}
+
+/** Fixed code for intentional duplicate-validation tests (no timestamp — same code twice). */
+export const DUPLICATE_VALIDATION_CODE = DiscountDataLabels.duplicateCode;
 
 /** ISO date YYYY-MM-DD for discount validity windows. */
 export function discountDateRange(daysFromNow = 30, spanDays = 30): {
@@ -41,4 +56,9 @@ export function discountDateRange(daysFromNow = 30, spanDays = 30): {
   end.setDate(end.getDate() + spanDays);
   const fmt = (d: Date) => d.toISOString().slice(0, 10);
   return { start_date: fmt(start), end_date: fmt(end) };
+}
+
+/** Meaningful name for the second request in duplicate-code validation. */
+export function duplicateAttemptDiscountName(timestamp: string = testTimestamp()): string {
+  return meaningfulTestValue(DiscountDataLabels.duplicateAttemptName, timestamp);
 }

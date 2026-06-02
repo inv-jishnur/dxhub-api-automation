@@ -1,0 +1,187 @@
+name: Login API Automation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: login-api-automation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api-tests:
+    name: Login API Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      test_total: ${{ steps.run-summary.outputs.test_total }}
+      test_passed: ${{ steps.run-summary.outputs.test_passed }}
+      test_failed: ${{ steps.run-summary.outputs.test_failed }}
+      test_duration: ${{ steps.run-summary.outputs.test_duration }}
+      artifact_name: ${{ steps.run-summary.outputs.artifact_name }}
+
+    env:
+      CI: true
+      BASE_URL: ${{ secrets.BASE_URL }}
+      AUTH_API_BASE_URL: ${{ secrets.AUTH_API_BASE_URL }}
+      LOGIN_URL: ${{ secrets.LOGIN_URL }}
+      VALID_EMAIL: ${{ secrets.VALID_EMAIL }}
+      VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
+      SERVICE_ID: ${{ secrets.SERVICE_ID }}
+      PROVIDER_ID: ${{ secrets.PROVIDER_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Playwright API tests
+        id: playwright
+        continue-on-error: true
+        run: npx playwright test login.api.spec.ts
+
+      - name: Generate Allure report
+        if: always()
+        run: npx allure generate allure-results --clean -o allure-report
+
+      - name: Capture run summary for notification
+        id: run-summary
+        if: always()
+        run: |
+          TOTAL="0"
+          PASSED="0"
+          FAILED="0"
+          DURATION="N/A"
+
+          if [ -f allure-report/widgets/summary.json ]; then
+            PASSED=$(jq -r '.statistic.passed // 0' allure-report/widgets/summary.json)
+            FAILED=$(jq -r '.statistic.failed // 0' allure-report/widgets/summary.json)
+            TOTAL=$(jq -r '.statistic.total // 0' allure-report/widgets/summary.json)
+            DURATION_MS=$(jq -r '.time.duration // 0' allure-report/widgets/summary.json)
+            SECS=$((DURATION_MS / 1000))
+            MIN=$((SECS / 60))
+            SEC=$((SECS % 60))
+            if [ "${MIN}" -gt 0 ]; then
+              DURATION="${MIN}m ${SEC}s"
+            else
+              DURATION="${SEC}s"
+            fi
+          fi
+
+          echo "test_total=${TOTAL}" >> "${GITHUB_OUTPUT}"
+          echo "test_passed=${PASSED}" >> "${GITHUB_OUTPUT}"
+          echo "test_failed=${FAILED}" >> "${GITHUB_OUTPUT}"
+          echo "test_duration=${DURATION}" >> "${GITHUB_OUTPUT}"
+          echo "artifact_name=allure-report-login-${{ github.run_number }}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload Allure report (ZIP download)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-login-${{ github.run_number }}
+          path: allure-report/
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload raw Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-login-${{ github.run_number }}
+          path: allure-results/
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Publish Allure report to GitHub Pages
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report
+
+      - name: Add workflow summary
+        if: always()
+        run: |
+          {
+            echo "## Login API automation run"
+            echo ""
+            echo "| Item | Value |"
+            echo "|------|--------|"
+            echo "| Playwright step | ${{ steps.playwright.outcome }} |"
+            echo "| Allure artifact | **allure-report-login-${{ github.run_number }}** |"
+            echo "| Spec | login.api.spec.ts |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  publish-allure-report:
+    name: Publish Login Allure Report
+    runs-on: ubuntu-latest
+    needs: api-tests
+    if: always() && needs.api-tests.result != 'cancelled'
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy Allure report to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Send Google Chat notification
+        if: always()
+        env:
+          GOOGLE_CHAT_WEBHOOK: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
+        run: |
+          if [ -z "${GOOGLE_CHAT_WEBHOOK}" ]; then
+            echo "GOOGLE_CHAT_WEBHOOK secret is not set; skipping Google Chat notification."
+            exit 0
+          fi
+
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          REPO="${GITHUB_REPOSITORY}"
+          TOTAL="${{ needs.api-tests.outputs.test_total }}"
+          PASSED="${{ needs.api-tests.outputs.test_passed }}"
+          FAILED="${{ needs.api-tests.outputs.test_failed }}"
+          DURATION="${{ needs.api-tests.outputs.test_duration }}"
+          ARTIFACT="${{ needs.api-tests.outputs.artifact_name }}"
+          ALLURE_URL="${{ steps.deployment.outputs.page_url }}"
+
+          if [ "${{ steps.deployment.outcome }}" != "success" ] || [ -z "${ALLURE_URL}" ]; then
+            ALLURE_URL="(unavailable — download artifact ${ARTIFACT} from ${RUN_URL})"
+          fi
+
+          MESSAGE=$(printf '%s\n' \
+            '🚀 API Automation Execution Completed' \
+            '' \
+            '📦 Module: Login API' \
+            '🔄 Workflow: Login API Tests' \
+            "📁 Repository: ${REPO}" \
+            '' \
+            '📊 Execution Summary:' \
+            "• Total Tests: ${TOTAL}" \
+            "• Passed: ${PASSED}" \
+            "• Failed: ${FAILED}" \
+            "• Duration: ${DURATION}" \
+            '' \
+            '📄 Allure Report:' \
+            "${ALLURE_URL}" \
+            '' \
+            "📎 Artifact: ${ARTIFACT}" \
+            '' \
+            '🔗 GitHub Actions Run:' \
+            "${RUN_URL}")
+
+          PAYLOAD=$(jq -n --arg text "${MESSAGE}" '{text: $text}')
+          curl -fsS -X POST -H "Content-Type: application/json; charset=UTF-8" -d "${PAYLOAD}" "${GOOGLE_CHAT_WEBHOOK}" \
+            || echo "::warning::Google Chat webhook notification failed."

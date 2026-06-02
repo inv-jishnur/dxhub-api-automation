@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { assertHttpStatus } from '../utils/allure-api';
 import { apiRequest, loginAccessToken } from '../utils/api-request';
 import { headers, planProviderCollectionUrl } from '../utils/config';
 import { buildPlanBody, planProviderItemUrl, readCreatedPlanId } from '../utils/plan';
@@ -13,7 +14,7 @@ test.describe('Plan Detailed View API', () => {
       headers: headers(token),
       data: buildPlanBody(),
     });
-    expect([200, 201]).toContain(createRes.status());
+    await assertHttpStatus(createRes, [200, 201]);
     planId = await readCreatedPlanId(createRes);
   });
 

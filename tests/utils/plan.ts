@@ -1,32 +1,36 @@
 import type { APIResponse } from '@playwright/test';
 import { planProviderCollectionUrl, providerId } from './config';
-import { type UniqueFieldRule, stringAtExactLength, withUniqueFields } from './unique-fields';
+import {
+  meaningfulTestValue,
+  meaningfulValueAtExactLength,
+  PlanDataLabels,
+  testTimestamp,
+} from './test-data';
+import { meaningfulUniqueField, withUniqueFields } from './unique-fields';
 
-export { stringAtExactLength };
+export {
+  meaningfulTestValue,
+  meaningfulValueAtExactLength,
+  PlanDataLabels,
+  stringAtExactLength,
+  testTimestamp,
+} from './test-data';
 
 export const validPlanBody = {
   provider: providerId,
-  plan_name: 'ValidPlanName',
-  plan_code: 'VALID_CODE',
+  plan_name: PlanDataLabels.validName,
+  plan_code: PlanDataLabels.validCode,
   type: 1,
   plan_type: 1,
   billing_type: 1,
-  description: 'Valid description',
+  description: 'Valid plan description for automation testing',
 } as const;
 
 /** Plan API fields uniquified on each call; explicit `null` and over-max strings are preserved. */
-export const planUniqueFieldRules: readonly UniqueFieldRule[] = [
-  {
-    key: 'plan_name',
-    maxLength: 250,
-    toUnique: (base, suffix) => (base + suffix).slice(0, 250),
-  },
-  {
-    key: 'plan_code',
-    maxLength: 100,
-    toUnique: (_base, suffix) => (`C${suffix}`).slice(0, 100),
-  },
-];
+export const planUniqueFieldRules = [
+  meaningfulUniqueField('plan_name', PlanDataLabels.validName, 250),
+  meaningfulUniqueField('plan_code', PlanDataLabels.validCode, 100),
+] as const;
 
 /** Avoid duplicate plan_code / plan_name collisions across runs. */
 export function withUniquePlanFields<T extends Record<string, unknown>>(body: T): T {
@@ -48,40 +52,54 @@ export function buildPlanBody(
   return withUniquePlanFields(body);
 }
 
+const maxLengthFieldLabels = {
+  plan_name: PlanDataLabels.maxLengthName,
+  plan_code: PlanDataLabels.maxLengthCode,
+  description: PlanDataLabels.maxLengthDescription,
+} as const;
+
+const exceedMaxLengthFieldLabels = {
+  plan_name: PlanDataLabels.exceedMaxLengthName,
+  plan_code: PlanDataLabels.exceedMaxLengthCode,
+  description: PlanDataLabels.exceedMaxLengthDescription,
+} as const;
+
 /**
- * Payload for boundary success tests: exact max lengths with unique suffixes (no duplicate collisions).
+ * Payload for boundary success tests: exact max lengths with meaningful unique text.
  */
 export function buildPlanBodyAtMaxLength(
   field: 'plan_name' | 'plan_code' | 'description',
   maxLen: number
 ): Record<string, unknown> {
-  const suffix = String(Date.now());
-  const unique = (prefix: string) => stringAtExactLength(maxLen, `${prefix}${suffix}`);
+  const timestamp = testTimestamp();
+  const atMax = (label: string) => meaningfulValueAtExactLength(maxLen, label, timestamp);
   const base: Record<string, unknown> = {
     provider: providerId,
-    plan_name: unique('N'),
-    plan_code: unique('C'),
+    plan_name: atMax(PlanDataLabels.maxLengthName),
+    plan_code: atMax(PlanDataLabels.maxLengthCode),
     type: 1,
     plan_type: 1,
     billing_type: 1,
-    description: 'Valid description',
+    description: meaningfulTestValue(PlanDataLabels.validDescription, timestamp),
   };
-  if (field === 'plan_name') base.plan_name = unique('N');
-  if (field === 'plan_code') base.plan_code = unique('C');
-  if (field === 'description') base.description = unique('D');
+  base[field] = atMax(maxLengthFieldLabels[field]);
   return base;
 }
 
 /**
- * Payload for over-max negative tests: string length is max+1 and other identifiers stay unique.
+ * Payload for over-max negative tests: meaningful text at max+1 length; other identifiers stay unique.
  */
 export function buildPlanBodyOverMaxLength(
   field: 'plan_name' | 'plan_code' | 'description',
   maxLen: number
 ): Record<string, unknown> {
-  const suffix = String(Date.now());
+  const timestamp = testTimestamp();
   const base = buildPlanBody();
-  base[field] = stringAtExactLength(maxLen + 1, suffix);
+  base[field] = meaningfulValueAtExactLength(
+    maxLen + 1,
+    exceedMaxLengthFieldLabels[field],
+    timestamp
+  );
   return base;
 }
 

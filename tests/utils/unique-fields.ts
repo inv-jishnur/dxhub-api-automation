@@ -1,3 +1,9 @@
+import {
+  meaningfulTestValue,
+  normalizeDataLabel,
+  testTimestamp,
+} from './test-data';
+
 export type UniqueFieldRule = {
   /** Request body key to uniquify (e.g. plan_name, plan_code, email). */
   key: string;
@@ -10,18 +16,14 @@ export type UniqueFieldRule = {
   maxLength?: number;
 };
 
-/**
- * Build a string of exactly `length` characters with a unique suffix at the end.
- */
-export function stringAtExactLength(
-  length: number,
-  suffix: string = String(Date.now()),
-  fill = 'A'
-): string {
-  const s = String(suffix);
-  if (s.length >= length) return s.slice(0, length);
-  return fill.repeat(length - s.length) + s;
-}
+export {
+  meaningfulTestValue,
+  meaningfulValueAtExactLength,
+  PlanDataLabels,
+  DiscountDataLabels,
+  stringAtExactLength,
+  testTimestamp,
+} from './test-data';
 
 /**
  * Copy `body` and uniquify configured fields to avoid collisions across test runs.
@@ -30,7 +32,7 @@ export function stringAtExactLength(
 export function withUniqueFields<T extends Record<string, unknown>>(
   body: T,
   rules: readonly UniqueFieldRule[],
-  suffix: string = String(Date.now())
+  suffix: string = testTimestamp()
 ): T {
   const out = { ...body } as Record<string, unknown>;
 
@@ -45,4 +47,20 @@ export function withUniqueFields<T extends Record<string, unknown>>(
   }
 
   return out as T;
+}
+
+/** Default uniquify: `MeaningfulLabel_timestamp`, truncated to maxLength when provided. */
+export function meaningfulUniqueField(
+  key: string,
+  fallbackLabel: string,
+  maxLength?: number
+): UniqueFieldRule {
+  return {
+    key,
+    maxLength,
+    toUnique: (base, suffix) => {
+      const value = meaningfulTestValue(normalizeDataLabel(base, fallbackLabel), suffix);
+      return maxLength !== undefined ? value.slice(0, maxLength) : value;
+    },
+  };
 }

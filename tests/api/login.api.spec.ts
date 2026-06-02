@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { assertHttpStatus } from '../utils/allure-api';
 import { apiRequest } from '../utils/api-request';
 import { credentials, headers, loginUrl } from '../utils/config';
 
@@ -41,7 +42,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: { password: 'x' },
     });
-    expect([400, 422]).toContain(res.status());
+    await assertHttpStatus(res, [400, 422]);
   });
 
   test('[API_TC_003] Verify that an error response is returned when the email field is null in the Login request body.', async ({
@@ -51,7 +52,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: { email: null, password: 'x' },
     });
-    expect([400, 422]).toContain(res.status());
+    await assertHttpStatus(res, [400, 422]);
   });
 
   test('[API_TC_004] Verify that an error response is returned when the email field is an empty string in the Login request body.', async ({
@@ -61,7 +62,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: { email: '', password: 'x' },
     });
-    expect([400, 422]).toContain(res.status());
+    await assertHttpStatus(res, [400, 422]);
   });
 
   test('[API_TC_005] Verify that an error response is returned when the email field has an invalid data type in the Login request body.', async ({
@@ -71,7 +72,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: { email: 12345, password: 'x' },
     });
-    expect([400, 401, 422]).toContain(res.status());
+    await assertHttpStatus(res, [400, 401, 422]);
   });
 
   test('[API_TC_006] Verify that an error response is returned when the email field has an invalid email format in the Login request body.', async ({
@@ -81,7 +82,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: { email: 'not-an-email', password: 'x' },
     });
-    expect([400, 401, 422]).toContain(res.status());
+    await assertHttpStatus(res, [400, 401, 422]);
   });
 
   test('[API_TC_007] Verify that an error response is returned when the email does not exist in the system.', async ({
@@ -103,7 +104,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: { email: credentials.validEmail },
     });
-    expect([400, 401, 422]).toContain(res.status());
+    await assertHttpStatus(res, [400, 401, 422]);
   });
 
   test('[API_TC_009] Verify that an error response is returned when the password field is null in the Login request body.', async ({
@@ -113,7 +114,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: { email: credentials.validEmail, password: null },
     });
-    expect([400, 401, 422]).toContain(res.status());
+    await assertHttpStatus(res, [400, 401, 422]);
   });
 
   test('[API_TC_010] Verify that an error response is returned when the password field is an empty string in the Login request body.', async ({
@@ -123,7 +124,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: { email: credentials.validEmail, password: '' },
     });
-    expect([400, 401, 422]).toContain(res.status());
+    await assertHttpStatus(res, [400, 401, 422]);
   });
 
   test('[API_TC_011] Verify that an error response is returned when the password field has an invalid data type in the Login request body.', async ({
@@ -133,7 +134,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: { email: credentials.validEmail, password: 12345 },
     });
-    expect([400, 401, 422]).toContain(res.status());
+    await assertHttpStatus(res, [400, 401, 422]);
   });
 
   test('[API_TC_012] Verify that HTTP 401 with errorCode 100 and message Invalid credentials is returned when the password does not match the registered password.', async ({
@@ -155,7 +156,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: '',
     });
-    expect([400, 422, 500]).toContain(res.status());
+    await assertHttpStatus(res, [400, 422, 500]);
   });
 
   test('[API_TC_014] Verify that an error response is returned when the Login request body is malformed JSON.', async ({
@@ -165,7 +166,7 @@ test.describe('Login API', () => {
       headers: headers(),
       data: '{invalid',
     });
-    expect([400, 500]).toContain(res.status());
+    await assertHttpStatus(res, [400, 500]);
   });
 
   test('[API_TC_015] Verify that the Login API handles unexpected fields in the request body without breaking server behavior.', async ({
@@ -179,14 +180,14 @@ test.describe('Login API', () => {
         unexpected_field: 'value',
       },
     });
-    expect([200, 400]).toContain(res.status());
+    await assertHttpStatus(res, [200, 400]);
   });
 
   test('[API_TC_016] Verify that an error response is returned when the Login API is invoked with HTTP GET instead of POST.', async ({
     request,
   }) => {
     const res = await apiRequest(request, 'GET', loginUrl, { headers: headers() });
-    expect([401, 404, 405]).toContain(res.status());
+    await assertHttpStatus(res, [401, 404, 405]);
   });
 
   test('[API_TC_017] Verify that an error response is returned when the Login API is invoked with HTTP PUT instead of POST.', async ({
@@ -197,14 +198,14 @@ test.describe('Login API', () => {
       headers: headers(),
       data: { email: credentials.validEmail, password: credentials.validPassword },
     });
-    expect([404, 405]).toContain(res.status());
+    await assertHttpStatus(res, [404, 405]);
   });
 
   test('[API_TC_018] Verify that an error response is returned when the Login API is invoked with HTTP DELETE instead of POST.', async ({
     request,
   }) => {
     const res = await apiRequest(request, 'DELETE', loginUrl, { headers: headers() });
-    expect([401, 404, 405]).toContain(res.status());
+    await assertHttpStatus(res, [401, 404, 405]);
   });
 
   test('[API_TC_019] Verify that an error response is returned when Content-Type is not application/json for the Login API.', async ({
@@ -217,7 +218,7 @@ test.describe('Login API', () => {
         password: credentials.validPassword,
       }),
     });
-    expect([400, 415]).toContain(res.status());
+    await assertHttpStatus(res, [400, 415]);
   });
 
   test('[API_TC_020] Verify that an error response is returned when the Content-Type header is missing for the Login API.', async ({
@@ -227,7 +228,7 @@ test.describe('Login API', () => {
       headers: { Accept: 'application/json' },
       data: { email: credentials.validEmail, password: credentials.validPassword },
     });
-    expect([200, 400, 415]).toContain(res.status());
+    await assertHttpStatus(res, [200, 400, 415]);
   });
 
   // API_TC_021 — account lockout (429 / errorCode 104): requires repeated failures or a locked test account.

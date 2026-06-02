@@ -29,9 +29,11 @@ export async function attachApiRequest(
 
 /** Attach response status (and headers) without consuming the response body. */
 export async function attachApiResponse(res: APIResponse): Promise<void> {
+  const status = res.status();
+  await allure.parameter('Response status code', String(status));
   await allure.attachment(
     'Response status',
-    `HTTP ${res.status()} ${res.statusText()}`,
+    `HTTP ${status} ${res.statusText()}`,
     'text/plain'
   );
   await allure.attachment(
@@ -41,7 +43,7 @@ export async function attachApiResponse(res: APIResponse): Promise<void> {
   );
 }
 
-/** Wrap an HTTP status assertion in an Allure step (visible in the report). */
+/** Wrap an HTTP status assertion in an Allure step with readable expected/received labels. */
 export async function assertHttpStatus(
   res: APIResponse,
   expected: number | readonly number[],
@@ -55,15 +57,42 @@ export async function assertHttpStatus(
 
   await allure.step(label, async () => {
     const status = res.status();
+
+    const fail = async (message: string): Promise<never> => {
+      let body = '';
+      try {
+        body = await res.text();
+      } catch {
+        body = '(could not read response body)';
+      }
+      const detail = `${message}\n\nActual HTTP status: ${status}\nResponse body:\n${body}`;
+      await allure.attachment('HTTP status assertion — failed', detail, 'text/plain');
+      // Do not use expect(allowed).toContain(status) — Playwright swaps labels in Allure:
+      // "Expected value: 201" / "Received array: [400, 422]" reads as if 201 were expected.
+      expect(false, message + (body ? `\nResponse body: ${body.slice(0, 1000)}` : '')).toBe(true);
+    };
+
     if (Array.isArray(expected)) {
-      expect(
-        expected,
-        `Expected status in [${expected.join(', ')}], got ${status}`
-      ).toContain(status);
-    } else {
-      expect(status, `Expected HTTP ${expected}, got ${status}`).toBe(expected);
+      const allowed = [...expected];
+      if (!allowed.includes(status)) {
+        await fail(`Expected HTTP status in [${allowed.join(', ')}], received HTTP ${status}`);
+      }
+      await allure.attachment(
+        'HTTP status assertion — passed',
+        `Expected one of [${allowed.join(', ')}], received HTTP ${status}`,
+        'text/plain'
+      );
+      return;
     }
-    await allure.attachment('Assertion result', `HTTP ${status} — passed`, 'text/plain');
+
+    if (status !== expected) {
+      await fail(`Expected HTTP ${expected}, received HTTP ${status}`);
+    }
+    await allure.attachment(
+      'HTTP status assertion — passed',
+      `Expected HTTP ${expected}, received HTTP ${status}`,
+      'text/plain'
+    );
   });
 }
 

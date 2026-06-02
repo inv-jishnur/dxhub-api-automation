@@ -1,7 +1,11 @@
-name: API Automation
+name: Discount API Automation
 
 on:
   workflow_dispatch:
+
+  repository_dispatch:
+    types:
+      - run-discount-api
 
 permissions:
   contents: read
@@ -9,7 +13,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: api-automation-${{ github.ref }}
+  group: discount-api-automation-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -24,7 +28,6 @@ jobs:
       test_duration: ${{ steps.run-summary.outputs.test_duration }}
       artifact_name: ${{ steps.run-summary.outputs.artifact_name }}
 
-    # Auto-login: Login API runs in beforeAll. Failed tests are recorded in Allure; job still succeeds.
     env:
       CI: true
       BASE_URL: ${{ secrets.BASE_URL }}
@@ -85,13 +88,13 @@ jobs:
           echo "test_passed=${PASSED}" >> "${GITHUB_OUTPUT}"
           echo "test_failed=${FAILED}" >> "${GITHUB_OUTPUT}"
           echo "test_duration=${DURATION}" >> "${GITHUB_OUTPUT}"
-          echo "artifact_name=allure-report-create-discount-${GITHUB_RUN_NUMBER}" >> "${GITHUB_OUTPUT}"
+          echo "artifact_name=allure-report-discount-${{ github.run_number }}" >> "${GITHUB_OUTPUT}"
 
       - name: Upload Allure report (ZIP download)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report-create-discount-${{ github.run_number }}
+          name: allure-report-discount-${{ github.run_number }}
           path: allure-report/
           retention-days: 30
           if-no-files-found: warn
@@ -100,7 +103,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-create-discount-${{ github.run_number }}
+          name: allure-results-discount-${{ github.run_number }}
           path: allure-results/
           retention-days: 14
           if-no-files-found: warn
@@ -115,19 +118,17 @@ jobs:
         if: always()
         run: |
           {
-            echo "## API automation run"
+            echo "## Discount API automation run"
             echo ""
             echo "| Item | Value |"
             echo "|------|--------|"
-            echo "| Playwright step | ${{ steps.playwright.outcome }} (failures are listed in Allure) |"
-            echo "| Allure HTML (artifact) | Download **allure-report-create-discount-${{ github.run_number }}** from this run |"
-            echo "| Allure HTML (online) | Published in the **publish-allure-report** job (GitHub Pages) |"
-            echo ""
-            echo "Failed tests remain **failed** in the Allure report (expected API gaps). The workflow continues so the report can be shared."
+            echo "| Playwright step | ${{ steps.playwright.outcome }} |"
+            echo "| Allure artifact | **allure-report-discount-${{ github.run_number }}** |"
+            echo "| Spec | create-discount.api.spec.ts |"
           } >> "$GITHUB_STEP_SUMMARY"
 
   publish-allure-report:
-    name: Publish Allure Report (GitHub Pages)
+    name: Publish Discount Allure Report
     runs-on: ubuntu-latest
     needs: api-tests
     if: always() && needs.api-tests.result != 'cancelled'
@@ -140,16 +141,6 @@ jobs:
       - name: Deploy Allure report to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Add publish summary
-        run: |
-          {
-            echo "## Allure report published"
-            echo ""
-            echo "**View report:** ${{ steps.deployment.outputs.page_url }}"
-            echo ""
-            echo "Share this URL with your team. Each workflow run replaces the site with the latest report."
-          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Send Google Chat notification
         if: always()
@@ -167,10 +158,11 @@ jobs:
           PASSED="${{ needs.api-tests.outputs.test_passed }}"
           FAILED="${{ needs.api-tests.outputs.test_failed }}"
           DURATION="${{ needs.api-tests.outputs.test_duration }}"
+          ARTIFACT="${{ needs.api-tests.outputs.artifact_name }}"
           ALLURE_URL="${{ steps.deployment.outputs.page_url }}"
 
           if [ "${{ steps.deployment.outcome }}" != "success" ] || [ -z "${ALLURE_URL}" ]; then
-            ALLURE_URL="(unavailable — see artifact on ${RUN_URL})"
+            ALLURE_URL="(unavailable — download artifact ${ARTIFACT} from ${RUN_URL})"
           fi
 
           MESSAGE=$(printf '%s\n' \
@@ -189,17 +181,11 @@ jobs:
             '📄 Allure Report:' \
             "${ALLURE_URL}" \
             '' \
+            "📎 Artifact: ${ARTIFACT}" \
+            '' \
             '🔗 GitHub Actions Run:' \
             "${RUN_URL}")
 
           PAYLOAD=$(jq -n --arg text "${MESSAGE}" '{text: $text}')
-
-          if ! curl -fsS -X POST \
-            -H "Content-Type: application/json; charset=UTF-8" \
-            -d "${PAYLOAD}" \
-            "${GOOGLE_CHAT_WEBHOOK}"; then
-            echo "::warning::Google Chat webhook notification failed."
-            exit 0
-          fi
-
-          echo "Google Chat notification sent successfully."
+          curl -fsS -X POST -H "Content-Type: application/json; charset=UTF-8" -d "${PAYLOAD}" "${GOOGLE_CHAT_WEBHOOK}" \
+            || echo "::warning::Google Chat webhook notification failed."

@@ -1,21 +1,15 @@
 import { test, expect } from '@playwright/test';
+import { assertHttpStatus } from '../utils/allure-api';
 import { apiRequest, loginAccessToken } from '../utils/api-request';
 import { discountUrl, headers, serviceId } from '../utils/config';
 import {
-  discountDateRange,
+  buildDiscountBody,
+  DUPLICATE_VALIDATION_CODE,
+  duplicateAttemptDiscountName,
   validDiscountBody,
-  withUniqueDiscountFields,
+  discountDateRange,
 } from '../utils/discount';
-
-const DUPLICATE_CODE = 'DUPLICATE_CODE_TEST';
-
-function validBody(overrides: Record<string, unknown> = {}) {
-  return withUniqueDiscountFields({
-    ...validDiscountBody,
-    ...discountDateRange(),
-    ...overrides,
-  });
-}
+import { INVALID_INT_VALUE } from '../utils/invalid-field-values';
 
 function omitKey<T extends Record<string, unknown>>(body: T, key: keyof T): Record<string, unknown> {
   const out = { ...body };
@@ -33,7 +27,7 @@ test.describe('Create Discount API', () => {
   test('[API_TC_078] Verify that the Create Discount API returns HTTP 201 when all required fields are valid according to the schema.', async ({
     request,
   }) => {
-    const payload = validBody();
+    const payload = buildDiscountBody();
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
       data: payload,
@@ -49,7 +43,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: omitKey(validBody(), 'code'),
+      data: omitKey(buildDiscountBody(), 'code'),
     });
     expect(res.status()).toBe(400);
   });
@@ -59,7 +53,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ code: null }),
+      data: buildDiscountBody({ code: null }),
     });
     expect(res.status()).toBe(400);
   });
@@ -69,7 +63,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ code: '' }),
+      data: buildDiscountBody({ code: '' }),
     });
     expect(res.status()).toBe(400);
   });
@@ -79,7 +73,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ code: 12345 as unknown as string }),
+      data: buildDiscountBody({ code: 12345 as unknown as string }),
     });
     expect(res.status()).toBe(400);
   });
@@ -89,7 +83,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: omitKey(validBody(), 'name'),
+      data: omitKey(buildDiscountBody(), 'name'),
     });
     expect(res.status()).toBe(400);
   });
@@ -99,7 +93,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ name: null as unknown as string }),
+      data: buildDiscountBody({ name: null as unknown as string }),
     });
     expect(res.status()).toBe(400);
   });
@@ -109,7 +103,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ name: '' }),
+      data: buildDiscountBody({ name: '' }),
     });
     expect(res.status()).toBe(400);
   });
@@ -119,7 +113,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ name: true as unknown as string }),
+      data: buildDiscountBody({ name: true as unknown as string }),
     });
     expect(res.status()).toBe(400);
   });
@@ -129,7 +123,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: omitKey(validBody(), 'service_id'),
+      data: omitKey(buildDiscountBody(), 'service_id'),
     });
     expect(res.status()).toBe(400);
   });
@@ -139,17 +133,17 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ service_id: null as unknown as number }),
+      data: buildDiscountBody({ service_id: null as unknown as number }),
     });
     expect(res.status()).toBe(400);
   });
 
-  test('[API_TC_089] Verify that an error is returned when service_id has an invalid data type (string) in the Create Discount request body.', async ({
+  test('[API_TC_089] Verify that an error is returned when service_id has an invalid data type (non-convertible value) in the Create Discount request body.', async ({
     request,
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ service_id: '1' as unknown as number }),
+      data: buildDiscountBody({ service_id: INVALID_INT_VALUE as unknown as number }),
     });
     expect(res.status()).toBe(400);
   });
@@ -159,9 +153,9 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ service_id: 999999999 }),
+      data: buildDiscountBody({ service_id: 999999999 }),
     });
-    expect([400, 404]).toContain(res.status());
+    await assertHttpStatus(res, [400, 404]);
   });
 
   test('[API_TC_091] Verify that an error is returned when discount_mode is missing from the Create Discount request body.', async ({
@@ -169,7 +163,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: omitKey(validBody(), 'discount_mode'),
+      data: omitKey(buildDiscountBody(), 'discount_mode'),
     });
     expect(res.status()).toBe(400);
   });
@@ -179,7 +173,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ discount_mode: null as unknown as number }),
+      data: buildDiscountBody({ discount_mode: null as unknown as number }),
     });
     expect(res.status()).toBe(400);
   });
@@ -189,17 +183,17 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ discount_mode: 99 }),
+      data: buildDiscountBody({ discount_mode: 99 }),
     });
     expect(res.status()).toBe(400);
   });
 
-  test('[API_TC_094] Verify that an error is returned when discount_mode has an invalid data type (string) in the Create Discount request body.', async ({
+  test('[API_TC_094] Verify that an error is returned when discount_mode has an invalid data type (non-convertible value) in the Create Discount request body.', async ({
     request,
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ discount_mode: '1' as unknown as number }),
+      data: buildDiscountBody({ discount_mode: INVALID_INT_VALUE as unknown as number }),
     });
     expect(res.status()).toBe(400);
   });
@@ -209,7 +203,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ discount_mode: 1 }),
+      data: buildDiscountBody({ discount_mode: 1 }),
     });
     expect(res.status()).toBe(201);
   });
@@ -219,7 +213,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ discount_mode: 2 }),
+      data: buildDiscountBody({ discount_mode: 2 }),
     });
     expect(res.status()).toBe(201);
   });
@@ -229,7 +223,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: omitKey(validBody(), 'coupon_type'),
+      data: omitKey(buildDiscountBody(), 'coupon_type'),
     });
     expect(res.status()).toBe(400);
   });
@@ -239,7 +233,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ coupon_type: null as unknown as number }),
+      data: buildDiscountBody({ coupon_type: null as unknown as number }),
     });
     expect(res.status()).toBe(400);
   });
@@ -249,17 +243,17 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ coupon_type: 10 }),
+      data: buildDiscountBody({ coupon_type: 10 }),
     });
     expect(res.status()).toBe(400);
   });
 
-  test('[API_TC_100] Verify that an error is returned when coupon_type has an invalid data type (string) in the Create Discount request body.', async ({
+  test('[API_TC_100] Verify that an error is returned when coupon_type has an invalid data type (non-convertible value) in the Create Discount request body.', async ({
     request,
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ coupon_type: '1' as unknown as number }),
+      data: buildDiscountBody({ coupon_type: INVALID_INT_VALUE as unknown as number }),
     });
     expect(res.status()).toBe(400);
   });
@@ -269,7 +263,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ coupon_type: 1 }),
+      data: buildDiscountBody({ coupon_type: 1 }),
     });
     expect(res.status()).toBe(201);
   });
@@ -279,7 +273,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ coupon_type: 2 }),
+      data: buildDiscountBody({ coupon_type: 2 }),
     });
     expect(res.status()).toBe(201);
   });
@@ -289,7 +283,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: omitKey(validBody(), 'value'),
+      data: omitKey(buildDiscountBody(), 'value'),
     });
     expect(res.status()).toBe(400);
   });
@@ -299,17 +293,17 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ value: null as unknown as number }),
+      data: buildDiscountBody({ value: null as unknown as number }),
     });
     expect(res.status()).toBe(400);
   });
 
-  test('[API_TC_105] Verify that an error is returned when value has an invalid data type (string) in the Create Discount request body.', async ({
+  test('[API_TC_105] Verify that an error is returned when value has an invalid data type (non-convertible value) in the Create Discount request body.', async ({
     request,
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ value: '10' as unknown as number }),
+      data: buildDiscountBody({ value: INVALID_INT_VALUE as unknown as number }),
     });
     expect(res.status()).toBe(400);
   });
@@ -319,7 +313,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ value: -1 }),
+      data: buildDiscountBody({ value: -1 }),
     });
     expect(res.status()).toBe(400);
   });
@@ -329,7 +323,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ value: 0 }),
+      data: buildDiscountBody({ value: 0 }),
     });
     expect(res.status()).toBe(400);
   });
@@ -339,7 +333,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: omitKey(validBody(), 'start_date'),
+      data: omitKey(buildDiscountBody(), 'start_date'),
     });
     expect(res.status()).toBe(400);
   });
@@ -349,7 +343,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ start_date: null as unknown as string }),
+      data: buildDiscountBody({ start_date: null as unknown as string }),
     });
     expect(res.status()).toBe(400);
   });
@@ -359,7 +353,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ start_date: '01-04-2026' }),
+      data: buildDiscountBody({ start_date: '01-04-2026' }),
     });
     expect(res.status()).toBe(400);
   });
@@ -369,7 +363,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ start_date: 20260401 as unknown as string }),
+      data: buildDiscountBody({ start_date: 20260401 as unknown as string }),
     });
     expect(res.status()).toBe(400);
   });
@@ -379,7 +373,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: omitKey(validBody(), 'end_date'),
+      data: omitKey(buildDiscountBody(), 'end_date'),
     });
     expect(res.status()).toBe(400);
   });
@@ -389,7 +383,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ end_date: null as unknown as string }),
+      data: buildDiscountBody({ end_date: null as unknown as string }),
     });
     expect(res.status()).toBe(400);
   });
@@ -399,7 +393,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ end_date: '2026/04/01' }),
+      data: buildDiscountBody({ end_date: '2026/04/01' }),
     });
     expect(res.status()).toBe(400);
   });
@@ -409,7 +403,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ start_date: '2026-06-01', end_date: '2026-05-01' }),
+      data: buildDiscountBody({ start_date: '2026-06-01', end_date: '2026-05-01' }),
     });
     expect(res.status()).toBe(400);
   });
@@ -419,7 +413,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: omitKey(validBody(), 'status'),
+      data: omitKey(buildDiscountBody(), 'status'),
     });
     expect(res.status()).toBe(400);
   });
@@ -429,7 +423,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ status: null as unknown as number }),
+      data: buildDiscountBody({ status: null as unknown as number }),
     });
     expect(res.status()).toBe(400);
   });
@@ -439,17 +433,17 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ status: 5 }),
+      data: buildDiscountBody({ status: 5 }),
     });
     expect(res.status()).toBe(400);
   });
 
-  test('[API_TC_119] Verify that an error is returned when status has an invalid data type (string) in the Create Discount request body.', async ({
+  test('[API_TC_119] Verify that an error is returned when status has an invalid data type (non-convertible value) in the Create Discount request body.', async ({
     request,
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ status: '1' as unknown as number }),
+      data: buildDiscountBody({ status: INVALID_INT_VALUE as unknown as number }),
     });
     expect(res.status()).toBe(400);
   });
@@ -459,7 +453,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ status: 1 }),
+      data: buildDiscountBody({ status: 1 }),
     });
     expect(res.status()).toBe(201);
   });
@@ -469,7 +463,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
-      data: validBody({ status: 2 }),
+      data: buildDiscountBody({ status: 2 }),
     });
     expect(res.status()).toBe(201);
   });
@@ -477,7 +471,7 @@ test.describe('Create Discount API', () => {
   test('[API_TC_122] Verify that an error is returned when the Create Discount request contains a duplicate code that already exists.', async ({
     request,
   }) => {
-    const first = validBody({ code: DUPLICATE_CODE });
+    const first = buildDiscountBody({ code: DUPLICATE_VALIDATION_CODE });
     const createRes = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
       data: first,
@@ -491,8 +485,8 @@ test.describe('Create Discount API', () => {
         ...validDiscountBody,
         ...discountDateRange(60, 30),
         service_id: serviceId,
-        code: DUPLICATE_CODE,
-        name: `Duplicate attempt ${Date.now()}`,
+        code: DUPLICATE_VALIDATION_CODE,
+        name: duplicateAttemptDiscountName(),
       },
     });
     expect(res.status()).toBe(400);
@@ -501,12 +495,12 @@ test.describe('Create Discount API', () => {
   test('[API_TC_123] Verify that an error is returned when the Create Discount request contains unexpected extra fields not defined in the contract.', async ({
     request,
   }) => {
-    const base = validBody();
+    const base = buildDiscountBody();
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers(token),
       data: { ...base, unexpected_field_xyz: true },
     });
-    expect([201, 400]).toContain(res.status());
+    await assertHttpStatus(res, [201, 400]);
   });
 
   test('[API_TC_124] Verify that an error is returned when the Create Discount request body is malformed JSON.', async ({
@@ -527,7 +521,7 @@ test.describe('Create Discount API', () => {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-      data: validBody(),
+      data: buildDiscountBody(),
     });
     expect(res.status()).toBe(401);
   });
@@ -537,7 +531,7 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: headers('not-a-real-jwt'),
-      data: validBody(),
+      data: buildDiscountBody(),
     });
     expect(res.status()).toBe(401);
   });
@@ -547,15 +541,15 @@ test.describe('Create Discount API', () => {
   }) => {
     const res = await apiRequest(request, 'POST', discountUrl, {
       headers: { ...headers(token), 'Content-Type': 'text/plain' },
-      data: JSON.stringify(validBody()),
+      data: JSON.stringify(buildDiscountBody()),
     });
-    expect([400, 415]).toContain(res.status());
+    await assertHttpStatus(res, [400, 415]);
   });
 
   test('[API_TC_128] Verify that the Create Discount API rejects GET method on the create endpoint URL.', async ({
     request,
   }) => {
     const res = await apiRequest(request, 'GET', discountUrl, { headers: headers(token) });
-    expect([404, 405]).toContain(res.status());
+    await assertHttpStatus(res, [404, 405]);
   });
 });
