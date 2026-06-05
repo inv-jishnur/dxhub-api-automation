@@ -65,7 +65,7 @@ jobs:
       - name: Capture run summary for notification
         id: run-summary
         if: always()
-        shell: pwsh
+        shell: powershell
         run: |
           $TOTAL = "0"
           $PASSED = "0"
@@ -118,15 +118,8 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
 
-      - name: Publish Allure report to GitHub Pages
-        if: always()
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: allure-report
-
       - name: Add workflow summary
         if: always()
-        shell: pwsh
         run: |
           @"
           ## Discount API automation run
@@ -149,9 +142,16 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy Allure report to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Download Allure Report Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-report-discount-${{ github.run_number }}
+          path: allure-report
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report
 
       - name: Send Google Chat notification
         if: always()
