@@ -20,8 +20,8 @@ jobs:
   api-tests:
     name: Create Discount API Tests
     runs-on:
-  - self-hosted
-  - PLAYWRIGHT-WIN
+      - self-hosted
+      - PLAYWRIGHT-WIN
     timeout-minutes: 60
     outputs:
       test_total: ${{ steps.run-summary.outputs.test_total }}
